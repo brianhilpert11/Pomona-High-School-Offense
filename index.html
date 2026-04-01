@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Pomona Red Devils Offense</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cr:#8B1020;--cr2:#A8162A;--cr3:#6B0A17;
+  --gd:#C9A84C;--gd2:#E4C76B;--gd3:#9A7030;
+  --bk:#111;--bk2:#1C1C1C;--bk3:#2A2A2A;
+  --wh:#F8F5EF;--wh2:#EDE9E0;--wh3:#D8D4CB;
+  --tx:#1A1A1A;--tx2:#4A4A4A;--tx3:#888;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --serif:'Georgia',serif;
+}
+body{font-family:var(--sans);background:var(--wh);color:var(--tx);min-height:100vh;overflow-x:hidden}
+#shell{max-width:480px;margin:0 auto;background:var(--wh);min-height:100vh;position:relative}
+#topbar{background:var(--cr);color:white;padding:12px 16px 10px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;border-bottom:2px solid var(--gd3)}
+#back-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:white;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;display:none;white-space:nowrap}
+#back-btn.show{display:block}
+#topbar-center{flex:1;min-width:0}
+#topbar-sub{font-size:10px;color:rgba(255,255,255,.6);letter-spacing:1.5px;text-transform:uppercase}
+#topbar-title{font-size:17px;font-weight:700;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#topbar-badge{background:var(--gd);color:var(--cr3);font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap;flex-shrink:0}
+#bottomnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--bk);display:flex;border-top:2px solid var(--gd3);z-index:200}
+.bnav{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px 12px;cursor:pointer;border:none;background:none;color:#666;transition:all .15s}
+.bnav .ico{font-size:20px;margin-bottom:3px}
+.bnav .lbl{font-size:9px;letter-spacing:.5px;text-transform:uppercase;font-family:var(--sans)}
+.bnav.active{color:var(--gd)}
+.bnav.active .lbl{color:var(--gd)}
+.screen{display:none;padding-bottom:80px}
+.screen.active{display:block}
+.hero{background:linear-gradient(160deg,var(--cr3) 0%,var(--cr) 55%,var(--cr2) 100%);padding:20px 16px 16px;color:white}
+.hero-ey{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:6px}
+.hero-h{font-family:var(--serif);font-size:26px;font-style:italic;line-height:1.15;margin-bottom:6px}
+.hero-qt{font-size:12px;color:rgba(255,255,255,.65);font-style:italic;border-left:2px solid var(--gd);padding-left:8px;margin-top:10px}
+.hero-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0 0}
+.hstat{background:rgba(255,255,255,.1);border-radius:8px;padding:10px 8px;text-align:center}
+.hstat .n{font-size:22px;font-weight:700;color:var(--gd2)}
+.hstat .l{font-size:10px;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.5px}
+.week-card{margin:12px;background:white;border:1px solid var(--wh3);border-radius:12px;padding:14px}
+.wc-hd{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.wc-dot{width:8px;height:8px;background:var(--cr);border-radius:50%}
+.wc-ttl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--tx2);font-weight:600}
+.pill-row{display:flex;flex-wrap:wrap;gap:5px}
+.pill{font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600}
+.pill.r{background:#FEE2E2;color:var(--cr3)}
+.pill.g{background:#FEF3C7;color:#7c5a00}
+.pill.b{background:#E0F2FE;color:#0c5a8a}
+.pill.gn{background:#D1FAE5;color:#065f46}
+.pill.dk{background:var(--bk3);color:var(--wh)}
+.coach-msg{margin:0 12px 12px;background:var(--bk2);border-radius:12px;padding:14px;border-left:3px solid var(--gd)}
+.coach-msg .label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--gd);font-weight:600;margin-bottom:6px}
+.coach-msg .msg{font-size:13px;color:var(--wh2);font-style:italic;line-height:1.6}
+.q-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px}
+.q-card{background:white;border:1px solid var(--wh3);border-radius:12px;padding:14px;cursor:pointer;transition:all .15s}
+.q-card:active{background:var(--wh2);transform:scale(.98)}
+.q-card .ico{font-size:24px;margin-bottom:6px}
+.q-card .ttl{font-size:13px;font-weight:700;color:var(--tx)}
+.q-card .sub{font-size:11px;color:var(--tx3);margin-top:2px}
+.list-pad{padding:10px 12px}
+.ls-hd{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--tx3);padding:8px 0 6px;font-weight:600}
+.li{display:flex;align-items:center;gap:12px;padding:12px;background:white;border:1px solid var(--wh3);border-radius:12px;margin-bottom:7px;cursor:pointer;transition:all .15s}
+.li:active{background:var(--wh2)}
+.li .ib{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.li .ib.cr{background:#FEE2E2}
+.li .ib.gd{background:#FEF3C7}
+.li .ib.bl{background:#E0F2FE}
+.li .ib.gn{background:#D1FAE5}
+.li .ib.dk{background:var(--bk2)}
+.li .inf .t{font-size:14px;font-weight:700;color:var(--tx)}
+.li .inf .s{font-size:12px;color:var(--tx3);margin-top:2px;line-height:1.4}
+.li .arr{margin-left:auto;color:var(--tx3);font-size:18px;flex-shrink:0}
+.dh{padding:16px;background:var(--bk);color:white}
+.dh h2{font-family:var(--serif);font-size:22px;font-style:italic;color:var(--gd2)}
+.dh p{font-size:13px;color:rgba(255,255,255,.6);margin-top:4px;line-height:1.5}
+.dh .br{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.dh .bg{font-size:10px;padding:3px 8px;border-radius:10px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.8);font-weight:600;letter-spacing:.5px}
+.ds{padding:14px 16px;border-bottom:1px solid var(--wh3)}
+.ds:last-child{border-bottom:none}
+.ds h3{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--tx3);margin-bottom:10px;font-weight:600}
+.rb{background:white;border:1px solid var(--wh3);border-left:3px solid var(--cr);border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px;font-size:13px;color:var(--tx);line-height:1.7}
+.rb.gd{border-left-color:var(--gd)}
+.rb.bl{border-left-color:#3B82F6}
+.rb.gn{border-left-color:#10B981}
+.rb strong{font-weight:700;color:var(--cr3)}
+.rb.gd strong{color:var(--gd3)}
+.rb.bl strong{color:#1D4ED8}
+.rb.gn strong{color:#065F46}
+.callout{background:var(--bk);color:var(--gd2);padding:12px 14px;border-radius:10px;margin:6px 0 10px;font-size:13px;font-style:italic;font-family:var(--serif);line-height:1.6}
+.dd{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.do-b{background:#D1FAE5;border-radius:8px;padding:10px;font-size:12px;color:#065F46;line-height:1.6}
+.dn-b{background:#FEE2E2;border-radius:8px;padding:10px;font-size:12px;color:var(--cr3);line-height:1.6}
+.do-b .hd,.dn-b .hd{font-weight:700;font-size:11px;letter-spacing:.5px;margin-bottom:4px}
+.at{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0}
+.at th{background:var(--bk);color:var(--gd);padding:7px 8px;text-align:left;font-size:10px;letter-spacing:.5px;text-transform:uppercase}
+.at td{padding:7px 8px;border-bottom:1px solid var(--wh3);vertical-align:top;line-height:1.4}
+.at tr:last-child td{border-bottom:none}
+.at tr:nth-child(even) td{background:var(--wh2)}
+.at td:first-child{font-weight:700;color:var(--cr3);white-space:nowrap}
+.cb{background:var(--bk2);border-radius:10px;padding:12px 14px;margin:6px 0}
+.cb .cl{font-size:10px;color:var(--gd);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:8px}
+.cues{list-style:none}
+.cues li{font-size:13px;color:var(--wh2);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06);line-height:1.5}
+.cues li:last-child{border-bottom:none}
+.cues li::before{content:'"';color:var(--gd);font-weight:700;margin-right:4px}
+.em{background:var(--cr);color:white;border-radius:10px;padding:12px 14px;margin:8px 0;font-size:13px;font-weight:600;line-height:1.5}
+.wb{background:#FEF3C7;border-left:3px solid var(--gd3);border-radius:0 8px 8px 0;padding:10px 12px;margin:8px 0;font-size:13px;color:#7c5a00;line-height:1.6}
+.sn{background:white;border:1px solid var(--wh3);border-radius:10px;padding:12px;margin-bottom:8px}
+.sn .base{font-size:14px;font-weight:800;color:var(--cr3);margin-bottom:6px}
+.sn .ch{display:flex;flex-direction:column;gap:5px;padding-left:14px;border-left:2px solid var(--gd)}
+.sc{font-size:12px;color:var(--tx2);display:flex;gap:8px;align-items:flex-start}
+.sc .ar{color:var(--gd3);font-weight:700;flex-shrink:0}
+.fc-wrap{padding:12px;background:#1A6B30;border-radius:10px;margin:8px 0;position:relative;min-height:180px}
+.los{position:absolute;left:0;right:0;bottom:72px;height:1px;background:rgba(255,255,255,.3)}
+.los-t{position:absolute;right:8px;bottom:76px;font-size:9px;color:rgba(255,255,255,.5);letter-spacing:1px;font-weight:600}
+.p{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;transform:translate(-50%,-50%);border:1.5px solid rgba(255,255,255,.3)}
+.p.ol{width:26px;height:26px;background:white;color:#1A6B30}
+.p.y{width:26px;height:26px;background:#FFD700;color:#333}
+.p.qb{width:28px;height:28px;background:var(--cr);color:white;border:2px solid var(--gd)}
+.p.rb{width:26px;height:26px;background:var(--cr2);color:white}
+.p.fb{width:26px;height:26px;background:#8B4513;color:white}
+.p.wb2{width:24px;height:24px;background:var(--gd);color:var(--bk)}
+.p.wr{width:24px;height:24px;background:#4A90D9;color:white}
+.qprog{height:4px;background:var(--wh3);border-radius:2px;margin-bottom:16px}
+.qprog-fill{height:100%;background:var(--cr);border-radius:2px;transition:width .3s}
+.qbox{background:var(--bk);color:white;border-radius:12px;padding:16px;margin-bottom:14px;font-size:15px;font-weight:600;line-height:1.5}
+.qnum{font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase}
+.opt-list{display:flex;flex-direction:column;gap:8px}
+.opt{background:white;border:1.5px solid var(--wh3);border-radius:10px;padding:12px 14px;font-size:13px;cursor:pointer;transition:all .15s;color:var(--tx);line-height:1.4;text-align:left;font-family:var(--sans)}
+.opt:active{transform:scale(.98)}
+.opt.correct{background:#D1FAE5;border-color:#10B981;color:#065F46;font-weight:600}
+.opt.wrong{background:#FEE2E2;border-color:var(--cr);color:var(--cr3)}
+.exp-box{background:#FEF3C7;border-radius:10px;padding:12px 14px;margin-top:10px;font-size:13px;color:#7c5a00;line-height:1.6;display:none}
+.exp-box.show{display:block}
+.q-next{width:100%;background:var(--cr);color:white;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;margin-top:10px;display:none;font-family:var(--sans)}
+.q-next.show{display:block}
+.sc-wrap{text-align:center;padding:30px 20px}
+.sc-big{font-size:64px;font-weight:900;color:var(--cr);font-family:var(--serif)}
+.sc-lbl{font-size:14px;color:var(--tx2);margin-top:4px}
+.sc-fb{font-size:15px;color:var(--tx);margin-top:16px;line-height:1.6}
+.sc-wrap button{margin-top:20px;background:var(--cr);color:white;border:none;border-radius:10px;padding:12px 28px;font-size:15px;cursor:pointer;font-family:var(--sans);font-weight:700}
+.qsel{padding:16px 12px}
+.qsel .hd{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--tx3);padding:4px 0 10px;font-weight:600}
+.flash-wrap{padding:16px}
+.flash-card{background:var(--cr);border-radius:16px;padding:30px 20px;min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:12px}
+.flash-card.flip{background:var(--bk)}
+.ft{font-size:28px;font-weight:900;color:white;font-family:var(--serif)}
+.fh{font-size:11px;color:rgba(255,255,255,.5);margin-top:10px;text-transform:uppercase;letter-spacing:1px}
+.fd-box{background:var(--bk);color:var(--wh2);border-radius:12px;padding:16px;margin-bottom:12px;font-size:14px;line-height:1.7;display:none}
+.fnav{display:flex;align-items:center;justify-content:center;gap:20px}
+.fnav button{background:white;border:1px solid var(--wh3);border-radius:10px;padding:10px 22px;font-size:13px;cursor:pointer;font-family:var(--sans);color:var(--tx);font-weight:600}
+.fctr{font-size:14px;color:var(--tx2);font-weight:600}
+.gs{padding:10px 12px;border-bottom:1px solid var(--wh3);background:white}
+.gs input{width:100%;padding:9px 14px;border:1.5px solid var(--wh3);border-radius:10px;font-size:14px;color:var(--tx);background:var(--wh);font-family:var(--sans)}
+.gs input:focus{outline:none;border-color:var(--cr)}
+.gl{padding:8px 16px 16px}
+.gr{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--wh3)}
+.gr:last-child{border-bottom:none}
+.gt{font-size:12px;font-weight:800;color:var(--cr3);min-width:95px;flex-shrink:0;text-transform:uppercase;letter-spacing:.3px;padding-top:1px}
+.gd2{font-size:13px;color:var(--tx2);line-height:1.5}
+.gtag{display:inline-block;font-size:10px;background:var(--wh2);color:var(--tx3);padding:1px 6px;border-radius:4px;margin-bottom:3px}
+.fc-wrap2{background:#1A6B30;border-radius:10px;padding:20px 10px;margin:8px 0;position:relative;overflow:hidden;min-height:200px}
+.sit-row{display:flex;flex-direction:column;gap:4px;padding:10px 0;border-bottom:1px solid var(--wh3);font-size:12px}
+.sit-row:last-child{border-bottom:none}
+.sit-hd{font-weight:700;font-size:13px;color:var(--tx)}
+.sit-call{color:#065F46}
+.sit-av{color:var(--cr3)}
+.front-card{background:white;border:1px solid var(--wh3);border-radius:12px;padding:14px;margin-bottom:10px}
+.fr-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.fr-n{font-size:15px;font-weight:800;color:var(--tx)}
+.fr-bg{font-size:11px;background:var(--cr);color:white;padding:3px 8px;border-radius:6px;font-weight:600}
+.fr-bg.odd{background:#1D4ED8}
+</style>
+</head>
+<body>
+<div id="shell">
+  <div id="topbar">
+    <button id="back-btn" onclick="goBack()">← Back</button>
+    <div id="topbar-center"><div id="topbar-sub">Pomona High Football</div><div id="topbar-title">Red Devils Offense</div></div>
+    <div id="topbar-badge">2026</div>
+  </div>
+  <div class="screen active" id="sc-home">
+    <div class="hero">
+      <div class="hero-ey">Wing-T / Auburn Spread Hybrid</div>
+      <div class="hero-h">Pomona Red Devils<br>Offensive System</div>
+      <div class="hero-qt">"In the midst of chaos, there is also opportunity." — Sun Tzu</div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="n">120</div><div class="l">Plays</div></div>
+        <div class="hstat"><div class="n">12</div><div class="l">Formations</div></div>
+        <div class="hstat"><div class="n">8</div><div class="l">Run Families</div></div>
+      </div>
+    </div>
+    <div class="week-card">
+      <div class="wc-hd"><div class="wc-dot"></div><div class="wc-ttl">This Week's Install</div></div>
+      <div class="pill-row">
+        <span class="pill r">Wing Left/Right</span><span class="pill r">Navy/Army</span>
+        <span class="pill g">GDB Rule</span><span class="pill g">Rump Line</span>
+        <span class="pill b">31/32 Trap</span><span class="pill b">29/28 Buck</span>
+        <span class="pill gn">25/26 Power</span>
+      </div>
+    </div>
+    <div class="coach-msg">
+      <div class="label">Coach's Note</div>
+      <div class="msg">"Technique before play. Play before formation. Formation before motion. If we cannot walk it — we will not run it."</div>
+    </div>
+    <div class="q-grid">
+      <div class="q-card" onclick="navTo('learn')"><div class="ico">📚</div><div class="ttl">Learn</div><div class="sub">Formations, plays, rules</div></div>
+      <div class="q-card" onclick="navTo('plays')"><div class="ico">🏈</div><div class="ttl">Play Library</div><div class="sub">All 120 plays</div></div>
+      <div class="q-card" onclick="navTo('quiz')"><div class="ico">✏️</div><div class="ttl">Quiz</div><div class="sub">Test your knowledge</div></div>
+      <div class="q-card" onclick="navTo('glossary')"><div class="ico">📖</div><div class="ttl">Glossary</div><div class="sub">Every term defined</div></div>
+    </div>
+    <div class="q-grid">
+      <div class="q-card" onclick="navTo('fronts')"><div class="ico">🗺️</div><div class="ttl">Front Guide</div><div class="sub">Vs every defense</div></div>
+      <div class="q-card" onclick="navTo('situational')"><div class="ico">⏱️</div><div class="ttl">Situational</div><div class="sub">Down &amp; distance calls</div></div>
+    </div>
+  </div>
+  <div class="screen" id="sc-learn">
+    <div class="list-pad">
+      <div class="ls-hd">System Foundation</div>
+      <div class="li" onclick="openDet('philosophy')"><div class="ib cr">🎯</div><div class="inf"><div class="t">Offensive Philosophy</div><div class="s">Wing-T + Auburn identity · 5 non-negotiable rules</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openDet('playcall')"><div class="ib gd">🔢</div><div class="inf"><div class="t">Play Call System</div><div class="s">Hole numbering · Back numbers · Tag decoder</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openDet('formations')"><div class="ib bl">📐</div><div class="inf"><div class="t">All 12 Formation Families</div><div class="s">Left/Right through Brett · Full alignment rules</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openDet('motions')"><div class="ib gn">↗️</div><div class="inf"><div class="t">Motions &amp; Shifts</div><div class="s">Dart · Orbit · Rip/Liz · Magic · Black Magic</div></div><div class="arr">›</div></div>
+      <div class="ls-hd">Blocking Rules</div>
+      <div class="li" onclick="openDet('gdb')"><div class="ib cr">🛡️</div><div class="inf"><div class="t">Gap — Down — Backer</div><div class="s">The #1 rule. Every snap. Every position.</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openDet('pulls')"><div class="ib gd">💪</div><div class="inf"><div class="t">Pull Block Types</div><div class="s">Trap · Kickout · Wrap · Lead · Wall · Pull Check</div></div><div class="arr">›</div></div>
+      <div class="ls-hd">Position Rooms</div>
+      <div class="li" onclick="openDet('ol')"><div class="ib bl">🔒</div><div class="inf"><div class="t">Offensive Line</div><div class="s">Stance · Splits · GDB · Every play assignment</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openDet('qb')"><div class="ib gd">⭐</div><div class="inf"><div class="t">Quarterback</div><div class="s">Reverse-out · Mesh · Reads · Waggle · Option</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openDet('rb')"><div class="ib cr">🏃</div><div class="inf"><div class="t">Running Backs</div><div class="s">2-back · 3-back · 4-back · All mechanics</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openDet('wr')"><div class="ib gn">🎯</div><div class="inf"><div class="t">WR / TE / Wing</div><div class="s">Stalk block · Crack · Routes · Y alignment</div></div><div class="arr">›</div></div>
+      <div class="ls-hd">Advanced Concepts</div>
+      <div class="li" onclick="openDet('series')"><div class="ib dk">🌳</div><div class="inf"><div class="t">Series Constraint Tree</div><div class="s">How every play connects · What to call next</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openDet('install')"><div class="ib bl">📅</div><div class="inf"><div class="t">20-Day Install Schedule</div><div class="s">Camp Day 1–20 · Weekly mastery standards</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openDet('coord')"><div class="ib gd">📋</div><div class="inf"><div class="t">7 Coordinator Rules</div><div class="s">Call sheet principles · Opening script</div></div><div class="arr">›</div></div>
+    </div>
+  </div>
+  <div class="screen" id="sc-plays">
+    <div class="list-pad">
+      <div class="ls-hd">Run Game Families</div>
+      <div class="li" onclick="openDet('trap')"><div class="ib cr">⚡</div><div class="inf"><div class="t">Trap Series (1–34)</div><div class="s">31/32 · 21/22 · 2nd Man · 2nd Option</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openDet('buck')"><div class="ib gd">🌊</div><div class="inf"><div class="t">Buck Sweep (35–56)</div><div class="s">29/28 · Navy/Army · Read tag · RPO Zap/Sail</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openDet('power')"><div class="ib bl">💥</div><div class="inf"><div class="t">Power Series (57–74)</div><div class="s">25/26 · Navy/Army · LA/Ram · Read variants</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openDet('belly')"><div class="ib gn">📖</div><div class="inf"><div class="t">Belly Series (80–95)</div><div class="s">Read option · Dartski · 2nd Man · Front-specific</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openDet('aseries')"><div class="ib dk">🔥</div><div class="inf"><div class="t">A-Series (96–98)</div><div class="s">Power-option hybrid · Lateral step · Live pitch</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openDet('sweep')"><div class="ib cr">💨</div><div class="inf"><div class="t">Speed Sweep (75–77)</div><div class="s">Rip/Liz motion · X Over tag</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openDet('xx')"><div class="ib gd">🔄</div><div class="inf"><div class="t">XX Double Handoff (78–79)</div><div class="s">Counter action · 2-back to 4-back</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openDet('counter')"><div class="ib bl">↩️</div><div class="inf"><div class="t">Counter (Play 120)</div><div class="s">Louisville Counter · False step · Trap puller</div></div><div class="arr">›</div></div>
+      <div class="ls-hd">Passing Game</div>
+      <div class="li" onclick="openDet('waggle')"><div class="ib gn">🎭</div><div class="inf"><div class="t">Waggle / Play-Action</div><div class="s">Boot mechanics · Reads · When to call</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openDet('routes')"><div class="ib dk">📡</div><div class="inf"><div class="t">Route Concepts</div><div class="s">Flood · Mesh · Bubble · Brett · Levels · Sail · Zap</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openDet('coverage')"><div class="ib cr">🔭</div><div class="inf"><div class="t">Coverage Read Guide</div><div class="s">Cover 0/1/2/3/4 · Best call vs each</div></div><div class="arr">›</div></div>
+    </div>
+  </div>
+  <div class="screen" id="sc-quiz">
+    <div class="qsel" id="quiz-menu">
+      <div class="hd">Choose a Quiz</div>
+      <div class="li" onclick="startQ('terminology')"><div class="ib gd">📖</div><div class="inf"><div class="t">Terminology Quiz</div><div class="s">10 questions</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="startQ('formations')"><div class="ib bl">📐</div><div class="inf"><div class="t">Formation ID Quiz</div><div class="s">8 questions</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="startQ('assignments')"><div class="ib cr">🎯</div><div class="inf"><div class="t">Assignment Quiz</div><div class="s">10 questions</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="startQ('situational')"><div class="ib gn">⏱️</div><div class="inf"><div class="t">Situational Quiz</div><div class="s">8 questions</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="startFlash()"><div class="ib dk">🃏</div><div class="inf"><div class="t">Flashcards</div><div class="s">18 essential terms — tap to flip</div></div><div class="arr">›</div></div>
+    </div>
+    <div style="padding:16px;display:none" id="quiz-active">
+      <div class="qprog"><div class="qprog-fill" id="qfill" style="width:0%"></div></div>
+      <div class="qbox"><div class="qnum" id="qnum"></div><div id="qtext"></div></div>
+      <div class="opt-list" id="opts"></div>
+      <div class="exp-box" id="exp"></div>
+      <button class="q-next" id="qnext" onclick="nextQ()">Next Question →</button>
+    </div>
+    <div class="sc-wrap" id="quiz-score" style="display:none">
+      <div class="sc-big" id="sc-num"></div>
+      <div class="sc-lbl">Correct Answers</div>
+      <div class="sc-fb" id="sc-fb"></div>
+      <button onclick="backQM()">Try Another Quiz</button>
+    </div>
+    <div class="flash-wrap" id="flash-active" style="display:none">
+      <div class="flash-card" id="fcard" onclick="flipF()">
+        <div class="ft" id="fterm"></div>
+        <div class="fh">Tap to reveal definition</div>
+      </div>
+      <div class="fd-box" id="fdef"></div>
+      <div class="fnav">
+        <button onclick="prevF()">← Prev</button>
+        <div class="fctr" id="fctr"></div>
+        <button onclick="nextF()">Next →</button>
+      </div>
+    </div>
+  </div>
+  <div class="screen" id="sc-glossary">
+    <div class="gs"><input type="text" placeholder="Search terms, definitions..." oninput="filterG(this.value)"></div>
+    <div class="gl" id="glos-list"></div>
+  </div>
+  <div class="screen" id="sc-fronts"><div class="list-pad"><div class="ls-hd">Formation vs. Defensive Front</div><div id="fronts-c"></div></div></div>
+  <div class="screen" id="sc-situational"><div class="list-pad"><div class="ls-hd">Down &amp; Distance Matrix</div><div id="sit-c"></div></div></div>
+  <div class="screen" id="sc-detail"><div id="det-c"></div></div>
+  <div id="bottomnav">
+    <button class="bnav active" id="bn-home" onclick="navTo('home')"><div class="ico">🏠</div><div class="lbl">Home</div></button>
+    <button class="bnav" id="bn-learn" onclick="navTo('learn')"><div class="ico">📚</div><div class="lbl">Learn</div></button>
+    <button class="bnav" id="bn-plays" onclick="navTo('plays')"><div class="ico">🏈</div><div class="lbl">Plays</div></button>
+    <button class="bnav" id="bn-quiz" onclick="navTo('quiz')"><div class="ico">✏️</div><div class="lbl">Quiz</div></button>
+    <button class="bnav" id="bn-glossary" onclick="navTo('glossary')"><div class="ico">📖</div><div class="lbl">Glossary</div></button>
+  </div>
+</div>
+<script>
+var curTab='home',curScreen='home',navHist=[];
+var TABS=['home','learn','plays','quiz','glossary'];
+function navTo(tab){
+  curTab=tab;curScreen=tab;navHist=[];
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  var sc=document.getElementById('sc-'+tab);
+  if(sc)sc.classList.add('active');
+  document.querySelectorAll('.bnav').forEach(b=>b.classList.remove('active'));
+  var bn=document.getElementById('bn-'+tab);
+  if(bn)bn.classList.add('active');
+  document.getElementById('back-btn').classList.remove('show');
+  var titles={home:'Red Devils Offense',learn:'Learn',plays:'Play Library',quiz:'Quiz Center',glossary:'Glossary',fronts:'Front Guide',situational:'Situational'};
+  document.getElementById('topbar-title').textContent=titles[tab]||tab;
+  if(tab==='fronts')buildFronts();
+  if(tab==='situational')buildSit();
+  if(tab==='quiz'){document.getElementById('quiz-menu').style.display='block';document.getElementById('quiz-active').style.display='none';document.getElementById('quiz-score').style.display='none';document.getElementById('flash-active').style.display='none';}
+}
+function openDet(key){
+  navHist.push(curScreen);curScreen='detail';
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sc-detail').classList.add('active');
+  var d=DET[key];
+  if(!d){document.getElementById('det-c').innerHTML='<div class="ds"><p>Content coming soon.</p></div>';return;}
+  document.getElementById('det-c').innerHTML=d.h;
+  document.getElementById('topbar-title').textContent=d.t;
+  document.getElementById('back-btn').classList.add('show');
+  window.scrollTo(0,0);
+}
+function goBack(){
+  var prev=navHist.pop()||curTab;
+  if(prev==='detail'){curScreen='detail';}else{navTo(prev);}
+}
+
+var DET={
+philosophy:{t:'Offensive Philosophy',h:`
+<div class="dh"><h2>Offensive Philosophy</h2><p>A deliberate marriage of the Delaware Wing-T and Gus Malzahn's 2012 Auburn spread — making the defense wrong before the snap, then punishing them at the point of attack.</p><div class="br"><span class="bg">Wing-T Deception</span><span class="bg">Auburn Tempo</span><span class="bg">120 Plays</span><span class="bg">12 Formations</span></div></div>
+<div class="ds"><h3>System in One Sentence</h3><div class="callout">"A physical, downhill, gap-running offense that uses 12 formation families, pre-snap Dart motion, formation shifts, and series deception to create blocking angles and numerical advantages — presented from spread alignments that Wing-T defenses have never seen."</div></div>
+<div class="ds"><h3>Wing-T Principles We Keep</h3>
+<div class="rb"><strong>Series Football:</strong> Every play family has a base, complement, and constraint. When they stop one — the other two open. Not variety — a trap.</div>
+<div class="rb"><strong>Backfield Deception:</strong> Reverse-out, brush fake, ride-and-decide, and Waggle boot create conflicting keys. A linebacker right about the Trap fake will be wrong about Buck Sweep.</div>
+<div class="rb"><strong>Gap-Down-Backer:</strong> Every OL follows the same three-step rule against any front — even, odd, slant, stunt. One rule handles all of them.</div>
+<div class="rb"><strong>Pull Blocking:</strong> Pullers arrive at a different angle than any static blocker. The trap block is invisible until it arrives. The wrap pull threads the hole.</div>
+<div class="rb"><strong>TE as Sixth Lineman:</strong> Y executes GDB on every gap play. Not a receiver split wide — a blocker who can catch.</div></div>
+<div class="ds"><h3>Auburn 2012 Principles We Add</h3>
+<div class="rb bl"><strong>Tempo:</strong> Snap before the defense substitutes, communicates, or aligns. Removes defenders from the equation before the snap.</div>
+<div class="rb bl"><strong>Formation Stress:</strong> 12 families create an identification and communication problem on every snap. High school defensive communication breaks down in 3–4 seconds.</div>
+<div class="rb bl"><strong>Front-Specific Formations:</strong> Louisville, Cardinal, Lance, Spear, LSU, Tiger are designed for specific fronts identified on film. The name tells you the target front.</div>
+<div class="rb bl"><strong>RPO Packaging:</strong> Selected runs paired with a quick pass that reads one defender. He is wrong either way.</div></div>
+<div class="ds"><h3>5 Non-Negotiable Rules</h3>
+<div class="rb gd"><strong>1. Simplicity:</strong> Every formation, motion, and play must solve a specific defensive problem. If you cannot name the problem — the play does not belong.</div>
+<div class="rb gd"><strong>2. Repetition:</strong> We run fewer plays more often. A player who has run 31 Trap 500 times executes it in the 4th quarter under pressure.</div>
+<div class="rb gd"><strong>3. Deception Is Structural:</strong> Every play contains a built-in deception mechanism. Deception is not a trick play — it is engineered into every call.</div>
+<div class="rb gd"><strong>4. Angles Beat Size:</strong> Gap blocking and pull blocking generate angles that no straight-up block can match.</div>
+<div class="rb gd"><strong>5. Count the Box:</strong> Before every snap, someone counts the box. We never run into a numbers deficit without an RPO or Waggle answer.</div></div>
+<div class="ds"><h3>4 Levels of Defensive Stress</h3>
+<div class="rb gn"><strong>Level 1 — Line:</strong> GDB ensures every gap is accounted for against any front. Pull angles cannot be prepared for in a week.</div>
+<div class="rb gn"><strong>Level 2 — Linebackers:</strong> Trap forces LBs inside. Buck Sweep forces them outside. Power hits the B-gap between them. When LBs cannot trust keys — they slow down. That slowdown is worth 3–4 yards per carry.</div>
+<div class="rb gn"><strong>Level 3 — Secondary:</strong> Motion and formation stress force secondary to declare before the snap. Dart tells us man or zone. Trips removes a safety. Waggle punishes a safety who walked toward the run.</div>
+<div class="rb gn"><strong>Level 4 — Sideline:</strong> 12 families with different blocking rules, pull directions, motion types, and read keys. A DC who stops Trap will be beaten by Buck Sweep. Every defensive adjustment opens a different window.</div></div>`},
+
+playcall:{t:'Play Call System',h:`
+<div class="dh"><h2>Play Call System</h2><p>Every play call is a complete code. Know the formula and you can decode any call — no chart needed.</p></div>
+<div class="ds"><h3>The Formula</h3><div class="em">PLAY NUMBER = [BACK NUMBER] + [HOLE NUMBER]<br><br>31 Trap = 3-back runs the 1-hole (FB dives left)<br>29 Buck = 2-back runs the 9-hole (HB sweeps left perimeter)<br>25 Power = 2-back runs the 5-hole (HB hits left B-gap)</div></div>
+<div class="ds"><h3>Back Numbers</h3>
+<table class="at"><thead><tr><th>Number</th><th>Back</th><th>Primary Role</th></tr></thead><tbody>
+<tr><td>2</td><td>Halfback (HB)</td><td>Buck Sweep, Power, gun Trap variants. Pitch on A-series.</td></tr>
+<tr><td>3</td><td>Fullback (FB)</td><td>Trap, Belly, A-series. Lead blocker / kickout on Power.</td></tr>
+<tr><td>4</td><td>Wingback</td><td>Speed Sweep. Option pitch. Motion. Corner blocker.</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Hole Map</h3>
+<div class="rb"><strong>ODD holes = LEFT side. EVEN holes = RIGHT side.</strong><br><br>1 = Backside A-gap LEFT &nbsp;|&nbsp; 2 = Backside A-gap RIGHT<br>3 = Play-side A-gap LEFT &nbsp;|&nbsp; 4 = Play-side A-gap RIGHT<br>5 = B-gap LEFT &nbsp;|&nbsp; 6 = B-gap RIGHT<br>7 = C-gap LEFT &nbsp;|&nbsp; 8 = C-gap RIGHT<br>9 = Left perimeter &nbsp;|&nbsp; 0 = Right perimeter</div></div>
+<div class="ds"><h3>Complete Play Decoder</h3>
+<table class="at"><thead><tr><th>Number</th><th>Back/Hole</th><th>Primary Formations</th></tr></thead><tbody>
+<tr><td>31 Trap</td><td>3-back, 1-hole</td><td>Left, Wing Left, Navy Red</td></tr>
+<tr><td>32 Trap</td><td>3-back, 2-hole</td><td>Right, Wing Right, Army Blue</td></tr>
+<tr><td>21 Trap</td><td>2-back, 1-hole</td><td>LA, LA Close, Louisville, Spear, Tiger, Trips</td></tr>
+<tr><td>22 Trap</td><td>2-back, 2-hole</td><td>Ram, Ram Close, Lance, LSU, Trips</td></tr>
+<tr><td>29 Buck</td><td>2-back, 9-hole</td><td>Wing Left, LA, Louisville, LSU, Spear</td></tr>
+<tr><td>28 Buck</td><td>2-back, 8-hole</td><td>Wing Right, Ram, Cardinal, Lance, Tiger</td></tr>
+<tr><td>25 Power</td><td>2-back, 5-hole</td><td>Wing Left, LA, Louisville</td></tr>
+<tr><td>26 Power</td><td>2-back, 6-hole</td><td>Wing Right, Ram, Cardinal</td></tr>
+<tr><td>37/36 Power</td><td>3-back, 7 or 6-hole</td><td>Navy Red (37), Army Blue (36)</td></tr>
+<tr><td>39/38 Buck</td><td>3-back sweep</td><td>Navy Red (39), Army Blue (38)</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Complete Tag Reference</h3>
+<table class="at"><thead><tr><th>Tag</th><th>Type</th><th>Meaning</th></tr></thead><tbody>
+<tr><td>Y DART</td><td>Formation</td><td>TE in Dart motion pre-snap. Auto in Louisville/Cardinal/Lance/Spear/LSU/Tiger.</td></tr>
+<tr><td>Y DARTSKI</td><td>Motion</td><td>TE takes Dart motion.</td></tr>
+<tr><td>Y ORBITSKI</td><td>Motion</td><td>TE takes Orbit motion.</td></tr>
+<tr><td>3 LIZ</td><td>Motion</td><td>3-back speed sweep LEFT pre-snap.</td></tr>
+<tr><td>3 RIP</td><td>Motion</td><td>3-back speed sweep RIGHT pre-snap.</td></tr>
+<tr><td>READ</td><td>Play tag</td><td>BSE read — QB keeps or gives based on backside end.</td></tr>
+<tr><td>ZAP</td><td>RPO</td><td>Press-coverage beater on Buck Sweep.</td></tr>
+<tr><td>SAIL</td><td>RPO</td><td>Deep seam concept on Buck Sweep vs. single-high.</td></tr>
+<tr><td>CLOSE</td><td>Formation</td><td>4-back in tighter pre-snap Dart alignment.</td></tr>
+<tr><td>2ND MAN</td><td>Play</td><td>Trap action, ball goes to sweep man instead of FB.</td></tr>
+<tr><td>2ND OPTION</td><td>Play</td><td>Trap 2nd Man + QB option read on second defender.</td></tr>
+<tr><td>X OVER</td><td>Formation</td><td>X aligns on same side as Y — 6-man surface.</td></tr>
+<tr><td>MAGIC</td><td>Shift</td><td>[Origin] MAGIC [Destination] + play. Snap at 3 seconds.</td></tr>
+</tbody></table></div>`},
+formations:{t:'All 12 Formation Families',h:`
+<div class="dh"><h2>12 Formation Families</h2><p>Every formation name is a complete code: TE side, gun or under-center, RB tag, and target front. Master the code and any call decodes instantly.</p><div class="br"><span class="bg">Even Front</span><span class="bg">Odd Front</span><span class="bg">Gun</span><span class="bg">Under Center</span></div></div>
+<div class="ds"><h3>Formation Code Key</h3>
+<div class="rb"><strong>LEFT/RIGHT</strong> = TE on that side. Under center. No wing.<br><strong>WING LEFT/RIGHT</strong> = TE named side + 4-back as wing (1yd outside Y, 1yd off LOS).<br><strong>NAVY/ARMY</strong> = TE Left/Right. Under center. Offset backfield. Red/Blue = action side.<br><strong>LA/RAM</strong> = TE Left/Right. GUN. Red = RB right of QB. Blue = RB left.<br><strong>LOUISVILLE/CARDINAL</strong> = Gun + Y Dart built in. EVEN front target.<br><strong>LANCE/SPEAR</strong> = Gun + Y Dart built in. ODD front target.<br><strong>LSU/TIGER</strong> = Gun + Y Dart. Film-specific front variants.</div></div>
+<div class="ds"><h3>Family 1 — Left / Right (Base)</h3>
+<div class="rb">Foundation of the system. Every player must execute every play from Left and Right before any other formation is installed. <strong>Days 1–10 of camp.</strong></div>
+<table class="at"><thead><tr><th>Formation</th><th>TE Side</th><th>Key Plays</th></tr></thead><tbody>
+<tr><td>LEFT</td><td>LEFT</td><td>31 Trap, 32 Trap, 25/26 Power, Waggle Right</td></tr>
+<tr><td>RIGHT</td><td>RIGHT</td><td>Mirror of Left. 26 Power, Waggle Left</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Family 2 — Wing Left / Right</h3>
+<div class="wb">Wing Left and Wing Right are NOT Left and Right. The 4-back wing changes assignments for Y, 4-back, and pull structure. A player who aligns in Wing Left as if it is Left will blow the play.</div>
+<table class="at"><thead><tr><th>Formation</th><th>4-Back</th><th>Key Plays</th></tr></thead><tbody>
+<tr><td>WING LEFT</td><td>1yd outside LEFT Y, 1yd off LOS</td><td>Buck Left (35), Belly Left Dart (80), XX Left (78)</td></tr>
+<tr><td>WING RIGHT</td><td>1yd outside RIGHT Y, 1yd off LOS</td><td>Buck Right (36), Belly Right Orbit (81), XX Right (79)</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Families 3 & 4 — Navy / Army and LA / Ram</h3>
+<table class="at"><thead><tr><th>Formation</th><th>TE / Gun?</th><th>Key Plays</th></tr></thead><tbody>
+<tr><td>NAVY RED</td><td>TE LEFT, under-ctr</td><td>Buck Navy Red (37), Power Navy Red (59)</td></tr>
+<tr><td>ARMY BLUE</td><td>TE RIGHT, under-ctr</td><td>Buck Army Blue (38), Trap Army Blue</td></tr>
+<tr><td>LA RED</td><td>TE LEFT, gun</td><td>Trap LA (7), Buck LA (39), Power LA (61), Flood A (110)</td></tr>
+<tr><td>RAM RED</td><td>TE RIGHT, gun</td><td>Trap Ram (8), Buck Ram (40), Power Ram (62)</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Families 5 & 6 — Louisville / Cardinal (Even Front)</h3>
+<div class="em">LOUISVILLE = TE LEFT. RG is the trap puller.<br>CARDINAL = TE RIGHT. LG is the trap puller.<br><br>On Cardinal — the RG does NOT pull. LG pulls. Getting this backwards loses the play.</div>
+<table class="at"><thead><tr><th>Formation</th><th>Target</th><th>Key Plays</th></tr></thead><tbody>
+<tr><td>LOUISVILLE</td><td>Even (E-N-T-E), W-M-S LBs</td><td>Louisville Dart Y (15), Buck 3 Liz (49), Power 3 Liz (65), Power Read (73), Counter (120)</td></tr>
+<tr><td>CARDINAL</td><td>Even front mirror</td><td>Cardinal Dart Y (16), Buck 3 Rip (50), Power 3 Rip (66), Power Read (74)</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Families 7 & 8 — Lance / Spear (Odd Front)</h3>
+<table class="at"><thead><tr><th>Formation</th><th>TE / Puller</th><th>Key Plays</th></tr></thead><tbody>
+<tr><td>LANCE</td><td>TE RIGHT. LG pulls (22 Trap)</td><td>Odd (E-T-N-E). Lance Y Dart (11), Buck Lance (45), Belly 2nd Man Lance (92)</td></tr>
+<tr><td>SPEAR</td><td>TE LEFT. RG pulls (21 Trap)</td><td>Odd mirror. Spear Y Dart (12), Buck Spear (46), Belly 2nd Man Spear (93)</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Families 9 & 10 — LSU / Tiger</h3>
+<div class="rb">Film-specific front variants. Same structural logic as Louisville/Cardinal/Lance/Spear. Use when film shows a front not covered by the other front-specific families.</div>
+<table class="at"><thead><tr><th>Formation</th><th>Puller</th><th>Key Plays</th></tr></thead><tbody>
+<tr><td>LSU</td><td>LG pulls — 22 Trap</td><td>Trap LSU (17), Buck LSU (51), Trap 2nd Man (29)</td></tr>
+<tr><td>TIGER</td><td>RG pulls — 21 Trap</td><td>Trap Tiger (18), Buck Tiger (52), Trap 2nd Man (30)</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Family 11 — Trips</h3>
+<div class="rb gn">Three receivers to one side. 4-back shifts wide. Automatically removes one defender from the box. Primary for Mesh, Bubble RPO, and Flood.</div>
+<table class="at"><thead><tr><th>Formation</th><th>Key Plays</th></tr></thead><tbody>
+<tr><td>TRIPS RIGHT RED</td><td>Power (64), Flood A (104), Mesh (108), 3 Bubble (109)</td></tr>
+<tr><td>TRIPS RIGHT BLUE</td><td>Trap (21), Power (63), Power Read (71)</td></tr>
+<tr><td>TRIPS LEFT BLUE</td><td>Flood A (105), Mesh (112), 3 Bubble (113)</td></tr>
+</tbody></table></div>`},
+
+motions:{t:'Motions & Shifts',h:`
+<div class="dh"><h2>Motions &amp; Shifts</h2><p>Every motion has a specific strategic purpose. Motion is not decoration — it is pre-snap problem-solving.</p><div class="br"><span class="bg">Coverage Declare</span><span class="bg">Gap Creation</span><span class="bg">Tempo</span></div></div>
+<div class="ds"><h3>Complete Motion Library</h3>
+<table class="at"><thead><tr><th>Motion</th><th>Player</th><th>Function</th><th>Coverage Read</th></tr></thead><tbody>
+<tr><td>DART</td><td>4-back</td><td>Short sprint to pitch relationship (2yds outside QB, 1yd behind). Arrives BEFORE snap.</td><td>Man = CB follows. Zone = nobody moves. Definitive.</td></tr>
+<tr><td>ORBIT</td><td>4-back</td><td>Wide arc behind QB to backside. Full coverage declaration.</td><td>Man = defender follows full arc.</td></tr>
+<tr><td>DARTSKI</td><td>Y (TE)</td><td>TE takes Dart motion — pitch relationship from TE position.</td><td>Tests how defense handles TE in motion.</td></tr>
+<tr><td>ORBITSKI</td><td>Y (TE)</td><td>TE takes Orbit motion — perimeter threat from TE.</td><td>Same as Orbit from TE.</td></tr>
+<tr><td>RIP</td><td>3 or 4-back</td><td>Full speed sweep motion RIGHT. Snapped on BSG's outside leg.</td><td>Speed threat right.</td></tr>
+<tr><td>LIZ</td><td>3 or 4-back</td><td>Full speed sweep motion LEFT. Mirror of Rip.</td><td>Speed threat left.</td></tr>
+<tr><td>X OVER</td><td>X receiver</td><td>X aligns on same side as Y — 6-man surface.</td><td>Forces defense to account for extra blocker.</td></tr>
+<tr><td>HEAVY</td><td>4-back</td><td>Slow walk across formation — not a speed threat.</td><td>Slow coverage reveal.</td></tr>
+<tr><td>ROCKET</td><td>4-back</td><td>Full cross-formation sprint across entire backfield.</td><td>Maximum horizontal stress.</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Man vs Zone Response</h3>
+<div class="rb gn"><strong>Man coverage:</strong> One defender follows the motion player — he is now in the wrong position for his run assignment. The gap he vacated is unaccounted for. Run into it before he recovers.</div>
+<div class="rb bl"><strong>Zone coverage:</strong> Nobody follows — you know it's zone. Snap before they adjust. Zone adjustments at HS level require 3–5 seconds of communication. Motion + tempo = snap before they finish.</div></div>
+<div class="ds"><h3>The Magic Shift System</h3>
+<div class="callout">[Origin Formation] MAGIC [Destination Formation] + [Play]<br>Snap at 3 seconds after shift. Players execute DESTINATION formation assignments.</div>
+<div class="rb"><strong>Left MAGIC LA Red — 21 Trap:</strong> Tight Wing-T look → shift to gun → snap before defense resets.</div>
+<div class="rb"><strong>Wing Right MAGIC Trips Right — 29 Buck:</strong> Wing tight → Trips → CBs backed off, alley open.</div>
+<div class="em">Black Magic = shift + motion simultaneously. Maximum stress. Use sparingly. Both formations must be individually mastered first.</div></div>
+<div class="ds"><h3>Zap &amp; Sail RPO Tags on Buck Sweep</h3>
+<div class="rb gd"><strong>ZAP (Plays 43, 48):</strong> Press coverage beater. Call vs. defenses that press outside receivers and abandon the flat.</div>
+<div class="rb gd"><strong>SAIL (Plays 44, 47):</strong> Deep seam concept. Call vs. single-high where safety rotates to Buck Sweep and abandons the seam.</div>
+<div class="rb gd"><strong>OL Rule:</strong> Run the sweep EVERY TIME regardless of what the QB does. QB reads one defender pre-snap. Coverage covers run = throw. Coverage covers route = hand off.</div></div>`},
+
+gdb:{t:'Gap — Down — Backer',h:`
+<div class="dh"><h2>Gap — Down — Backer</h2><p>The single most important blocking rule in the offense. Every lineman. Every gap play. Every snap. Non-negotiable.</p></div>
+<div class="ds"><h3>Step 1: Check Your GAP</h3>
+<div class="rb"><strong>Look into your inside/backside gap FIRST — every snap, no exceptions.</strong><br>If a defender is in your gap: he is yours. No hesitation. Block him immediately. This stops penetration and handles slants/stunts before they develop.</div></div>
+<div class="ds"><h3>Step 2: Block DOWN</h3>
+<div class="rb"><strong>If gap is empty: step DOWN at an inside angle toward the center.</strong><br>Block the first defender in your path. Eyes inside — do not chase outside movement. Stay tight to adjacent linemen — build the RUMP LINE.</div></div>
+<div class="ds"><h3>Step 3: Climb to BACKER</h3>
+<div class="rb"><strong>If no defender in gap or down path: climb to the play-side linebacker.</strong><br>Stay tight off the LOS, inside the structure. Locate the first LB that shows — block him. Patient early. Decisive once you commit. Direct path. Maintain leverage. Finish.</div></div>
+<div class="ds"><h3>Do's and Don'ts</h3>
+<div class="dd"><div class="do-b"><div class="hd">✓ DO</div>Check your gap every snap — no exceptions<br>Stay square and low through the progression<br>Direct path to the backer — no looping<br>Be patient at second level<br>Finish every block to the whistle</div>
+<div class="dn-b"><div class="hd">✗ DON'T</div>Skip the gap check — one missed slant kills the play<br>Drift wide to the backer<br>Leave the down man too early<br>Stop your feet on contact<br>Assume the gap is empty — see it first</div></div></div>
+<div class="ds"><h3>Coaching Cues</h3>
+<div class="cb"><div class="cl">Say These Out Loud</div><ul class="cues">
+<li>Check your gap first. Every snap. Even if you think it's empty — check it.</li>
+<li>One missed gap check is one play lost. Never again.</li>
+<li>Low pad level wins. Standing tall = leverage lost.</li>
+<li>Do not leave until you FEEL him stop moving.</li>
+</ul></div></div>`},
+
+pulls:{t:'Pull Block Types',h:`
+<div class="dh"><h2>Pull Block Types</h2><p>Pullers arrive at a different angle than any static blocker. Master the rump line. Eyes up early. Commit completely.</p></div>
+<div class="ds"><h3>Fundamentals — All Pulls</h3>
+<div class="rb"><strong>Stay tight to the RUMP LINE</strong> — no depth on the pull. Flat, efficient path. Eyes up early — find your block target before you arrive. Tight path = faster fit = cleaner run.</div></div>
+<div class="ds"><h3>Trap Pull</h3>
+<div class="rb"><strong>Used:</strong> All Trap plays (BSG pulls)<br><strong>Path:</strong> Pull flat and hard — fastest pull in the offense.<br><strong>Target:</strong> First DL past center. Attack his outside number. Drive him back into the hole he came from.<br><strong>Key:</strong> This block springs the entire play. Miss it = play is dead.</div></div>
+<div class="ds"><h3>Kickout Block</h3>
+<div class="rb"><strong>Used:</strong> Buck Sweep (PSG), A-series (PSG)<br><strong>Path:</strong> Pull flat down the line. Stay tight — no depth.<br><strong>Target:</strong> EMOL's inside shoulder.<br><strong>Execution:</strong> Explode hips through contact. Create horizontal displacement outward.<br><strong>Key:</strong> Do not turn up too early. Stay square through contact.</div></div>
+<div class="ds"><h3>Wrap Pull (Power)</h3>
+<div class="rb"><strong>Used:</strong> Power plays (BSG)<br><strong>Path:</strong> Pull TIGHT off the RUMP LINE — stay vertical, no bubble.<br><strong>Target:</strong> Insert through the hole created by the kickout. Square up play-side LB.<br><strong>Execution:</strong> Inside-out fit. Maintain leverage. Drive your feet.<br><strong>Key:</strong> Thread the hole. Clean fit = vertical run.</div></div>
+<div class="ds"><h3>Lead Pull (Buck Sweep — BSG)</h3>
+<div class="rb"><strong>Path:</strong> Pull flat initially, then climb to the alley behind the kickout.<br><strong>Target:</strong> First force/OLB/DB outside. Square up in space. Break down under control. Strike and sustain.<br><strong>Key:</strong> Do not overrun the block. Eyes up early. Control the alley.</div></div>
+<div class="ds"><h3>Pull Check — Kick or Log</h3>
+<div class="em">EMOL widens/plays contain → KICK: attack inside shoulder, drive outward.<br>EMOL squeezes/wrong-arms → LOG: hook and seal inside, let ball bounce wide.<br><br>"Half decisions lose. Commit completely once you read."</div></div>
+<div class="ds"><h3>OL Master Assignment Chart</h3>
+<table class="at"><thead><tr><th>Play</th><th>LT</th><th>LG</th><th>C</th><th>RG</th><th>RT</th></tr></thead><tbody>
+<tr><td>Trap Left (31)</td><td>Scoop</td><td>TRAP PULL</td><td>GDB</td><td>GDB</td><td>GDB</td></tr>
+<tr><td>Trap Right (32)</td><td>GDB</td><td>GDB</td><td>GDB</td><td>TRAP PULL</td><td>Scoop</td></tr>
+<tr><td>Louisville 21</td><td>Bkr</td><td>TRAP PULL</td><td>Post-Lead</td><td>GDB</td><td>Scoop</td></tr>
+<tr><td>Cardinal 21</td><td>Scoop</td><td>TRAP PULL</td><td>Post-Lead</td><td>Bkr</td><td>Bkr</td></tr>
+<tr><td>Buck Left (35)</td><td>CUTOFF</td><td>LEAD</td><td>Fire-Away</td><td>KICK</td><td>GDB</td></tr>
+<tr><td>Buck Right (36)</td><td>GDB</td><td>KICK</td><td>Fire-Away</td><td>LEAD</td><td>CUTOFF</td></tr>
+<tr><td>Power Left (57)</td><td>GDB</td><td>WRAP</td><td>Blk Away</td><td>GDB</td><td>Pull Chk</td></tr>
+<tr><td>Power Right (58)</td><td>Pull Chk</td><td>GDB</td><td>Blk Away</td><td>WRAP</td><td>GDB</td></tr>
+<tr><td>Speed Sweep L</td><td>Scoop</td><td>PULL+WALL</td><td>Zone</td><td>Zone</td><td>Zone</td></tr>
+<tr><td>XX Left (78)</td><td>Base</td><td>Post-Lead</td><td>Post-Lead</td><td>Base</td><td>PULL+TRAP</td></tr>
+</tbody></table></div>`},
+
+ol:{t:'OL Position Room',h:`
+<div class="dh"><h2>Offensive Line</h2><p>The program is the OL. Everything works because of you or fails because of you. The OL standard must be the highest on the staff — most technical, most demanding, most consistent.</p></div>
+<div class="ds"><h3>Stance — Non-Negotiable Standard</h3>
+<table class="at"><thead><tr><th>Element</th><th>Standard</th></tr></thead><tbody>
+<tr><td>Feet</td><td>Slightly wider than shoulder-width. Staggered: play-side foot back on gap plays.</td></tr>
+<tr><td>Weight</td><td>60% forward. Balls of feet. Heels elevated slightly.</td></tr>
+<tr><td>Hips</td><td>LOW and LOADED. Knees past 90°. Hips BELOW shoulders always.</td></tr>
+<tr><td>Back</td><td>Flat. Parallel to ground. No arch, no hump.</td></tr>
+<tr><td>Eyes</td><td>UP — see the defender's numbers. Never look at the ground.</td></tr>
+<tr><td>Down hand</td><td>Fingertips only. Light pressure. Inside the foot.</td></tr>
+</tbody></table>
+<div class="callout">"Low pad level wins. If you are standing tall at the snap — you have already lost the leverage battle."</div></div>
+<div class="ds"><h3>Splits</h3>
+<div class="rb"><strong>Guard from Center:</strong> 2 feet<br><strong>Tackle from Guard:</strong> 2–3 feet<br><strong>TE from Tackle:</strong> 1–2 yards on runs, flex to 3 yards on pass<br><em>Rule: Never widen your split so a defender can align in the gap between you and your partner.</em></div></div>
+<div class="ds"><h3>Left Guard — Play-by-Play</h3>
+<table class="at"><thead><tr><th>Play</th><th>LG Assignment</th></tr></thead><tbody>
+<tr><td>Trap Left (BSG)</td><td>TRAP PULL — flat → trap first DL past center</td></tr>
+<tr><td>Louisville (BSG)</td><td>TRAP PULL — LG pulls on Cardinal and Lance too</td></tr>
+<tr><td>Buck Left (PSG)</td><td>Pull → LEAD ALLEY — behind kickout, climb to alley</td></tr>
+<tr><td>Buck Right (BSG)</td><td>Pull → KICK FORCE</td></tr>
+<tr><td>Power Left (BSG)</td><td>WRAP PULL — tight rump line → wrap → first LB inside-out</td></tr>
+<tr><td>Power Right (PSG)</td><td>Gap → Down → Backer</td></tr>
+<tr><td>Speed Sweep Left</td><td>PULL + WALL backer</td></tr>
+<tr><td>Trap Right (PSG)</td><td>Gap → Down → Backer</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Right Guard — Play-by-Play</h3>
+<table class="at"><thead><tr><th>Play</th><th>RG Assignment</th></tr></thead><tbody>
+<tr><td>Trap Left (PSG)</td><td>Gap → Down → Backer</td></tr>
+<tr><td>Trap Right (BSG)</td><td>TRAP PULL — flat → trap first DL past center</td></tr>
+<tr><td>Louisville (BSG)</td><td>TRAP PULL — RG pulls on Louisville and LA Close</td></tr>
+<tr><td>Cardinal (PSG)</td><td>Gap → Down → Backer (LG pulls on Cardinal, NOT RG)</td></tr>
+<tr><td>Buck Left (BSG)</td><td>Pull → KICK FORCE left</td></tr>
+<tr><td>Buck Right (PSG)</td><td>Pull → LEAD ALLEY right</td></tr>
+<tr><td>Power Left (PSG)</td><td>Gap → Down → Backer</td></tr>
+<tr><td>Power Right (BSG)</td><td>WRAP PULL — tight rump line → wrap → first LB</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Center — All Plays</h3>
+<table class="at"><thead><tr><th>Play Type</th><th>Center Assignment</th></tr></thead><tbody>
+<tr><td>All base Trap (under-center)</td><td>Gap → Down → Backer. Uncovered = climb to backside backer.</td></tr>
+<tr><td>All gun Trap variants</td><td>POST-LEAD</td></tr>
+<tr><td>Louisville/Cardinal</td><td>POST-LEAD. PRE-SNAP: call the front (even vs odd).</td></tr>
+<tr><td>Buck Sweep Left/Right</td><td>FIRE-ON-AWAY — burst into backside A-gap at snap</td></tr>
+<tr><td>Power Left/Right</td><td>BLOCK AWAY A-gap</td></tr>
+<tr><td>A-series</td><td>Fire-on-away</td></tr>
+<tr><td>XX</td><td>Post-Lead</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Coaching Cues</h3>
+<div class="cb"><div class="cl">OL Cues</div><ul class="cues">
+<li>Check your gap first. Every snap. Even if you think it's empty — check it.</li>
+<li>Rump line. Stay on the chalk. Flat and fast on every pull.</li>
+<li>Low pad level wins. If you are standing up at the snap — you have already lost.</li>
+<li>Inside hands. Thumbs up. Lock your wrists.</li>
+<li>Do not leave until you FEEL him stop moving.</li>
+<li>Pull Check: read his first step. Kick or log — commit completely. Half a decision is a missed block.</li>
+<li>Block through the whistle. Not to it.</li>
+</ul></div></div>`},
+
+qb:{t:'Quarterback Room',h:`
+<div class="dh"><h2>Quarterback</h2><p>Actor and game manager first. Passer second. A QB who executes every fake at full speed and sells every action is more valuable than a QB with a great arm who telegraphs plays.</p></div>
+<div class="ds"><h3>Reverse-Out — Step by Step</h3>
+<table class="at"><thead><tr><th>Step</th><th>Standard</th></tr></thead><tbody>
+<tr><td>1. SECURE</td><td>Pull UP and IN to midline. TWO HANDS. SEAT the ball. Nothing moves until the ball is seated.</td></tr>
+<tr><td>2. POST FOOT</td><td>Foot AWAY from the play opens at 45+ degrees. This is the false key — it sells the play direction.</td></tr>
+<tr><td>3. MESH</td><td>Two hands through the full ride. Meet the back where they arrive — do not pull back early.</td></tr>
+<tr><td>4. CARRY FAKE</td><td>Full speed. Tuck the empty arm as if carrying the ball. Reach the Waggle landmark before turning.</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>QB Assignment by Play</h3>
+<table class="at"><thead><tr><th>Play</th><th>QB Assignment</th></tr></thead><tbody>
+<tr><td>Trap (under center)</td><td>Reverse-out. Ride 3-back two hands. Give. Carry Waggle fake at FULL SPEED. MANDATORY.</td></tr>
+<tr><td>Trap (gun 21/22)</td><td>Hand to 2-back. Gun — no reverse-out needed.</td></tr>
+<tr><td>Buck Sweep</td><td>Reverse-out. BRUSH FB (belly fake — SELL IT). Hand to 2-back on midline. Waggle boot away.</td></tr>
+<tr><td>Power</td><td>Reverse-out. Clean handoff to 2-back. Carry fake away with authority.</td></tr>
+<tr><td>Buck/Power READ</td><td>Same mechanics. Read BSE — crashes = keep and run perimeter. Sits = give the ball.</td></tr>
+<tr><td>Belly</td><td>Reverse-out. RIDE 3-back. READ 1st DL outside PSG. Give or keep. DEFAULT IS ALWAYS GIVE.</td></tr>
+<tr><td>A-series</td><td>Reverse-out. Hand to 3-back. Fake option outside. 2-back is a live pitch option.</td></tr>
+<tr><td>Speed Sweep</td><td>Motion snap on BSG's outside leg. Extended one-arm handoff to 4-back at full sprint.</td></tr>
+<tr><td>Waggle</td><td>Reverse-out. Full run fake. Boot opposite. Read: flat → middle → throw away.</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Belly Read Teaching Progression</h3>
+<div class="rb gn"><strong>Step 1:</strong> 30 reps of giving only — path must be automatic before adding the read.<br><strong>Step 2:</strong> Slow-motion read. QB rides 2 full seconds. Verbalize: "He's attacking... pull."<br><strong>Step 3:</strong> Increase speed over 3–5 practices. Never two of the same read key in a row.<br><strong>Rule:</strong> If the QB cannot describe what the read key did — he was guessing.</div></div>
+<div class="ds"><h3>Coaching Cues</h3>
+<div class="cb"><div class="cl">QB Cues</div><ul class="cues">
+<li>Seat the ball first. Nothing moves until the ball is seated.</li>
+<li>Post foot opens the play. If it does not open — the reverse-out is wrong.</li>
+<li>Ride him. Feel his hip. Do not decide before you feel the mesh.</li>
+<li>Every fake is a real play. If you slow down — you cost us yards on the next call.</li>
+<li>What did you see from the read key? Describe it out loud — after EVERY option rep.</li>
+<li>Triple option default: GIVE. If you are keeping, the read key tackled the 3-back. Did he?</li>
+</ul></div></div>`},
+
+rb:{t:'Running Backs Room',h:`
+<div class="dh"><h2>Running Backs</h2><p>Three backs. Three identities. Each one has a different primary role and different required skills. Know your role. Master your technique.</p></div>
+<div class="ds"><h3>Three Identities</h3>
+<table class="at"><thead><tr><th>Back</th><th>Identity</th><th>Primary Skills</th></tr></thead><tbody>
+<tr><td>2-Back (HB)</td><td>Reads and produces. One-cut north-south. Follows pullers.</td><td>L-cut timing. Counter step discipline. Ball security.</td></tr>
+<tr><td>3-Back (FB)</td><td>Creates and punishes. Dives, leads, fakes. A-series lateral step.</td><td>Two-step trap footwork. A-series lateral step. Kickout block on Power.</td></tr>
+<tr><td>4-Back (Wing)</td><td>Stretches and threatens. Motion player. Pitch back. Corner blocker.</td><td>Motion timing. Dart/Orbit arrival. Speed Sweep acceleration.</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>2-Back Key Mechanics</h3>
+<div class="rb"><strong>L-CUT (Buck Sweep):</strong> 2 steps through FB alignment BEFORE cutting. Non-negotiable. Players who cut before the second step miss the entire crease.</div>
+<div class="rb"><strong>COUNTER STEP (Power):</strong> ONE step away from play. One. Not two. Not a shuffle. ONE hard step, then follow the wrap puller.</div>
+<div class="rb"><strong>BALL SECURITY:</strong> Tip at armpit, elbow clamped, wrist over the top. Gauntlet drill daily.</div></div>
+<div class="ds"><h3>3-Back Key Mechanics</h3>
+<div class="rb"><strong>TWO-STEP TRAP:</strong> Crossover step + drive step. DECISIVE. Hit the hole vertical. Do NOT bounce. Ball hits in less than one second.</div>
+<div class="rb"><strong>A-SERIES LATERAL STEP:</strong> ONE lateral step toward play side. Then run for the TAIL (outside hip) of the TE. Completely different from Trap footwork. Drill separately.</div>
+<div class="rb"><strong>POWER KICKOUT:</strong> Attack inside shoulder. Drive outward. Stay engaged through the whistle. You are moving a man, not touching him.</div></div>
+<div class="ds"><h3>4-Back Key Mechanics</h3>
+<div class="rb"><strong>DART MOTION:</strong> Begin on QB heel lift. Sprint to pitch relationship (2 yds outside QB, 1 yd behind). Arrive BEFORE the snap — not at the snap.</div>
+<div class="rb"><strong>CORNER BLOCK (gun):</strong> After Dart landing on Louisville/Cardinal/Lance/Spear — BLOCK THE CORNER. You are NOT the ball carrier. The 2-back has it.</div>
+<div class="rb"><strong>SPEED SWEEP RIP/LIZ:</strong> Full sprint BEFORE the snap. Ball snapped on BSG's outside leg. Do not slow down for the handoff — run through it.</div></div>
+<div class="ds"><h3>Coaching Cues</h3>
+<div class="cb"><div class="cl">RB Cues</div><ul class="cues">
+<li>Two steps through the FB. Do not cut before the second cone.</li>
+<li>One counter step. ONE. Then north.</li>
+<li>4-back on Louisville — Dart, land, BLOCK the corner. The 2-back has the ball.</li>
+<li>3-back on A-series — one lateral step, then run for the TAIL OF THE TE. Not straight ahead.</li>
+<li>If you are faking — I should not be able to tell from the film. Carry it like you have it.</li>
+</ul></div></div>`},
+
+wr:{t:'WR / TE / Wing Room',h:`
+<div class="dh"><h2>WR / TE / Wing</h2><p>Blockers first. Receivers second. A WR who cannot stalk block a CB will not play. A TE who cannot execute GDB rules will not play.</p></div>
+<div class="ds"><h3>Stalk Block — Four-Step Model</h3>
+<table class="at"><thead><tr><th>Step</th><th>Technique</th><th>Coaching Cue</th></tr></thead><tbody>
+<tr><td>1. RELEASE</td><td>45-degree inside release. Sell a route — body language, eyes up.</td><td>"You are a receiver first. Sell the route before you sell the block."</td></tr>
+<tr><td>2. CLOSE</td><td>Sprint toward the DB. Close his cushion aggressively.</td><td>"Close fast. Hesitation is a miss."</td></tr>
+<tr><td>3. BREAK DOWN</td><td>At 2-3 yards: choppy feet, low hips, pads forward. Mirror his movement.</td><td>"Break down at 2 yards. Not 1. Not 3."</td></tr>
+<tr><td>4. STRIKE</td><td>On his commitment: inside hands, low pad level, drive your feet.</td><td>"Wait for him to commit. Strike on his first step."</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Y (TE) Alignment — All Formations</h3>
+<table class="at"><thead><tr><th>Family</th><th>Y Alignment</th></tr></thead><tbody>
+<tr><td>LEFT / RIGHT</td><td>Named side. Inline, 1yd outside tackle, ON the LOS.</td></tr>
+<tr><td>WING LEFT / RIGHT</td><td>Named side. 4-back is 1yd outside Y, 1yd off LOS.</td></tr>
+<tr><td>NAVY / ARMY</td><td>Navy = Y LEFT. Army = Y RIGHT.</td></tr>
+<tr><td>LA / RAM</td><td>LA = Y LEFT. Ram = Y RIGHT.</td></tr>
+<tr><td>LOUISVILLE / CARDINAL</td><td>Louisville = Y LEFT. Cardinal = Y RIGHT.</td></tr>
+<tr><td>LANCE / SPEAR</td><td>Lance = Y RIGHT. Spear = Y LEFT.</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Y — Run Play Assignment</h3>
+<div class="rb"><strong>On ALL Trap, Buck, Power, and A-series:</strong> Gap → Down → Backer (same rule as OL). Check your inside gap FIRST every snap. You are the sixth lineman.</div></div>
+<div class="ds"><h3>Coaching Cues</h3>
+<div class="cb"><div class="cl">WR / TE Cues</div><ul class="cues">
+<li>Your block on the perimeter is worth as much as any OL block at the line.</li>
+<li>Inside 45 on the release. Sell the route before you sell the block.</li>
+<li>Block through the whistle. Your job is not done at the LOS.</li>
+<li>Hands out front. Watch the ball into your hands. THEN tuck.</li>
+</ul></div></div>`},
+
+series:{t:'Series Constraint Tree',h:`
+<div class="dh"><h2>Series Constraint Tree</h2><p>Every play family is connected to every other through constraint relationships. Understanding these tells you what to call NEXT based on what the defense did.</p></div>
+<div class="ds"><h3>Play Relationships</h3>
+<div class="sn"><div class="base">Trap (31/32)</div><div class="ch">
+<div class="sc"><div class="ar">→</div><div>Waggle — same action, QB boots opposite direction</div></div>
+<div class="sc"><div class="ar">→</div><div>Buck Sweep — if LBs are flowing inside to stop Trap</div></div>
+<div class="sc"><div class="ar">→</div><div>Trap to opposite side (defense stunts one way)</div></div>
+</div></div>
+<div class="sn"><div class="base">Trap (21/22 gun)</div><div class="ch">
+<div class="sc"><div class="ar">→</div><div>Trap 2nd Man — same action, ball to sweep (4-back or Y)</div></div>
+<div class="sc"><div class="ar">→</div><div>Trap 2nd Option — Trap fake + option read on second defender</div></div>
+</div></div>
+<div class="sn"><div class="base">Buck Sweep</div><div class="ch">
+<div class="sc"><div class="ar">→</div><div>Buck to open side (away from TE)</div></div>
+<div class="sc"><div class="ar">→</div><div>Buck Read — BSE read tag added at zero cost</div></div>
+<div class="sc"><div class="ar">→</div><div>Waggle — same Buck action, QB passes</div></div>
+<div class="sc"><div class="ar">→</div><div>Power (LBs over-rotated outside for Buck = B-gap open)</div></div>
+</div></div>
+<div class="sn"><div class="base">Power</div><div class="ch">
+<div class="sc"><div class="ar">→</div><div>Power Read — BSE read added at zero cost</div></div>
+<div class="sc"><div class="ar">→</div><div>Speed Sweep (OLB crashes to stop Power = edge cleared)</div></div>
+<div class="sc"><div class="ar">→</div><div>Buck Sweep (if they over-pursue inside for Power)</div></div>
+</div></div>
+<div class="sn"><div class="base">Louisville Trap</div><div class="ch">
+<div class="sc"><div class="ar">→</div><div>Counter Louisville — same formation, counter step freezes reading LBs</div></div>
+<div class="sc"><div class="ar">→</div><div>Trap 2nd Option Louisville — triple read off same action</div></div>
+</div></div>
+<div class="sn"><div class="base">Any established run</div><div class="ch">
+<div class="sc"><div class="ar">→</div><div>Waggle off that run's fake</div></div>
+<div class="sc"><div class="ar">→</div><div>Brett passing packages vs confirmed coverage</div></div>
+</div></div></div>
+<div class="ds"><h3>In-Game Decision Matrix</h3>
+<table class="at"><thead><tr><th>Defense Did This</th><th>Call This Next</th></tr></thead><tbody>
+<tr><td>LBs over-pursued Buck Sweep — crashed backside</td><td>31/32 Trap — backside gap is vacated</td></tr>
+<tr><td>OLB crashed inside on Power every snap</td><td>Speed Sweep — edge he just cleared is open</td></tr>
+<tr><td>LBs scraped over top to stop Buck</td><td>Power or Trap — inside gaps vacated by their adjustment</td></tr>
+<tr><td>8+ in the box pre-snap</td><td>RPO Bubble or Waggle — throw the numbers right</td></tr>
+<tr><td>Safety walked into box pre-snap</td><td>Waggle — seam behind him is open</td></tr>
+<tr><td>CB played tight run support all drive</td><td>Corner route or Fade off PA</td></tr>
+<tr><td>DL slanted backside on Trap every snap</td><td>Buck Sweep — slant clears play-side gap</td></tr>
+<tr><td>Trap hitting 5+ yards consistently</td><td>Stay on it. Add Waggle. Never abandon what is working.</td></tr>
+</tbody></table></div>`},
+
+install:{t:'20-Day Install Schedule',h:`
+<div class="dh"><h2>20-Day Install Schedule</h2><p>Technique before play. Play before formation. Formation before motion. Never skip a level. The time saved by skipping is repaid triple in game execution errors.</p></div>
+<div class="ds"><h3>Days 1–5: Foundation</h3>
+<table class="at"><thead><tr><th>Day</th><th>Install Focus</th><th>Mastery Standard</th></tr></thead><tbody>
+<tr><td>Day 1</td><td>Stance, splits, alignment, hole numbering, formation naming, philosophy</td><td>Every player demonstrates stance. Recites formation code correctly.</td></tr>
+<tr><td>Day 2</td><td>OL GDB + base blocks. QB snap-seat-reverse-out. RB mesh stance.</td><td>GDB on air. QB completes 20 clean reverse-outs.</td></tr>
+<tr><td>Day 3</td><td>All pull types: trap, kick, lead, wrap. QB with snap. RB mesh timing.</td><td>Pull mechanics clean. Flat and fast.</td></tr>
+<tr><td>Day 4</td><td>31/32 Trap — Left and Right only. Walk-through.</td><td>All 11 execute Trap from Left and Right with correct assignments.</td></tr>
+<tr><td>Day 5</td><td>Trap run-through. Waggle fake after EVERY Trap rep.</td><td>Trap at run-through speed. QB Waggle fake is automatic.</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Days 6–10: Core Run Game</h3>
+<table class="at"><thead><tr><th>Day</th><th>Install Focus</th><th>Mastery Standard</th></tr></thead><tbody>
+<tr><td>Day 6</td><td>Wing Left/Right: 4-back wing alignment. Buck Sweep walk-through.</td><td>Wing alignment correct. L-cut path and QB brush fake clean.</td></tr>
+<tr><td>Day 7</td><td>Buck Sweep run-through. Add Navy/Army formations.</td><td>Buck at run-through speed. Navy/Army alignment automatic.</td></tr>
+<tr><td>Day 8</td><td>Power Left/Right walk-through. Counter step. Wrap puller.</td><td>Power walk-through with correct counter step and wrap timing.</td></tr>
+<tr><td>Day 9</td><td>Power run-through. Add LA/Ram gun alignment.</td><td>Power run-through clean. LA/Ram gun alignment clean.</td></tr>
+<tr><td>Day 10</td><td>Full base review: Trap / Buck Sweep / Power. FIRST SCRIMMAGE.</td><td>All three plays from all base formations without assignment errors.</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Days 11–15: Perimeter & Option</h3>
+<table class="at"><thead><tr><th>Day</th><th>Install Focus</th><th>Mastery Standard</th></tr></thead><tbody>
+<tr><td>Day 11</td><td>Speed Sweep (Rip/Liz timing). XX counter.</td><td>Motion timing automatic. XX handoff chain clean.</td></tr>
+<tr><td>Day 12</td><td>Belly walk-through. QB read concept introduction.</td><td>QB verbalizes read key correctly.</td></tr>
+<tr><td>Day 13</td><td>Belly run-through. Belly 2nd Man walk-through.</td><td>Belly run-through clean. 3-back fake quality coaching-point clean.</td></tr>
+<tr><td>Day 14</td><td>LA/Ram Close. Louisville/Cardinal installation.</td><td>Close alignment automatic. Louisville/Cardinal Dart motion timed.</td></tr>
+<tr><td>Day 15</td><td>A-series walk-through: A Left, A Right, A Ram.</td><td>3-back lateral step distinct from all other plays. 2-back in pitch relationship.</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Days 16–20: Pass Game & Advanced</h3>
+<table class="at"><thead><tr><th>Day</th><th>Install Focus</th><th>Mastery Standard</th></tr></thead><tbody>
+<tr><td>Day 16</td><td>A-series run-through. Waggle as live pass.</td><td>A-series timing clean. QB delivers on Waggle flat route.</td></tr>
+<tr><td>Day 17</td><td>Trap 2nd Man. Flood A from Trips. RPO Bubble tag.</td><td>Trap 2nd Man fake passes film test. Flood routes at correct depths.</td></tr>
+<tr><td>Day 18</td><td>Red zone, goal line, 3rd-and-short packages.</td><td>Red zone plays execute without assignment errors.</td></tr>
+<tr><td>Day 19</td><td>Full motion system. Magic shifts. Black Magic.</td><td>All motions timed. Coverage declarations read and called by QB.</td></tr>
+<tr><td>Day 20</td><td>Trap 2nd Option. 2-minute drill. Final full scrimmage.</td><td>QB describes Trap 2nd Option read on every rep.</td></tr>
+</tbody></table></div>`},
+
+coord:{t:'7 Coordinator Rules',h:`
+<div class="dh"><h2>7 Coordinator Rules</h2><p>These are the guardrails. When in doubt — come back to these. They exist because smart coaches have broken every one of them and paid the price.</p></div>
+<div class="ds"><h3>The 7 Rules</h3>
+<div class="rb"><strong>1. NEVER run into an 8-man box without an RPO or Waggle answer.</strong> The numbers are against you. A negative play on 1st down is a 3-and-out.</div>
+<div class="rb"><strong>2. NEVER call a play you have not repped enough to trust.</strong> Complexity without practice is a turnover. If it is not clean at run-through — it does not get called in a game.</div>
+<div class="rb"><strong>3. NEVER abandon the run after 2–3 stops.</strong> Series football requires patience. The third play in the series hits. Stopping at two is quitting on the system.</div>
+<div class="rb"><strong>4. NEVER use a trick play on 3rd and 1.</strong> Use your best play. Impose your will. The moment you trick-play on 3rd and 1 is the moment you tell your OL they cannot get 1 yard.</div>
+<div class="rb"><strong>5. NEVER call a coverage-specific Brett package without confirming the coverage.</strong> Brett Cover 2 into Cover 3 is a pick.</div>
+<div class="rb"><strong>6. NEVER try to make the defense wrong with one play call alone.</strong> Make them wrong with SEQUENCING. The play that wins in the 4th quarter was set up in the 1st.</div>
+<div class="rb"><strong>7. ALWAYS call your plays with conviction.</strong> A confident call executed at 80% beats a perfect call made tentatively. The team feeds off the tone of every decision.</div></div>
+<div class="ds"><h3>Opening Script — First 10 Plays</h3>
+<div class="callout">"The opening script is an intelligence gathering operation, not a scoring drive. Every play tests a specific defensive tendency. The result is secondary. The information is the primary goal."</div>
+<table class="at"><thead><tr><th>Play</th><th>Purpose</th><th>Information Gathered</th></tr></thead><tbody>
+<tr><td>1</td><td>Best base run to TE side.</td><td>Front structure. LB alignment. Who attacks the pull.</td></tr>
+<tr><td>2</td><td>Same series complement.</td><td>Did they adjust? How fast? What opened?</td></tr>
+<tr><td>3</td><td>Opposite formation family.</td><td>Do they re-communicate? How long does it take?</td></tr>
+<tr><td>4</td><td>Motion play (Dart or Liz).</td><td>Man or zone? Coverage confirmed.</td></tr>
+<tr><td>5</td><td>Waggle/play-action after 4 runs.</td><td>Is the boot open? Is the seam there?</td></tr>
+<tr><td>6</td><td>Attack what plays 1–5 revealed.</td><td>Does the vulnerability hold up?</td></tr>
+<tr><td>7–10</td><td>Continue testing and exploiting.</td><td>By play 10: which run hits, coverage tendency, best defender location.</td></tr>
+</tbody></table></div>`},
+trap:{t:'Trap Series (1–34)',h:`
+<div class="dh"><h2>Trap Series</h2><p>The foundation of the entire offense. Every other play derives its effectiveness from the Trap being a credible inside threat. The DL who penetrates is the easiest man to trap.</p><div class="br"><span class="bg">Plays 1–34</span><span class="bg">Foundation</span><span class="bg">BSG Pulls</span></div></div>
+<div class="ds"><h3>Coaching Truth</h3>
+<div class="callout">"The Trap wins because it rewards aggression with a blindside block. The DL who penetrates is the mechanism of his own defeat."</div>
+<div class="wb"><strong>DO NOT run Trap on back-to-back plays.</strong> The defense will stunt the A-gap. The Trap works because it is unexpected — sequence it with Buck and Power.</div></div>
+<div class="ds"><h3>31 Trap — Full Assignments</h3>
+<table class="at"><thead><tr><th>Position</th><th>Assignment</th></tr></thead><tbody>
+<tr><td>QB</td><td>Reverse-out. Ride 3-back two hands. Give. Carry Waggle fake at FULL SPEED. MANDATORY.</td></tr>
+<tr><td>3-BACK</td><td>2-step trap footwork: CROSSOVER then DRIVE. Cut to hole vertical. Do NOT bounce.</td></tr>
+<tr><td>2-BACK</td><td>Fake Buck Sweep at full speed. Carry your path as if you are getting the ball.</td></tr>
+<tr><td>X</td><td>Block FS — perimeter seal.</td></tr>
+<tr><td>4-BACK</td><td>Gap → Down → Backer on play side.</td></tr>
+<tr><td>Y</td><td>Gap → Down → Backer (play-side).</td></tr>
+<tr><td>BSG (LG on 31)</td><td>STANDARD TRAP PULL: Pull flat → trap first DL past center. Attack outside number.</td></tr>
+<tr><td>PSG (RG on 31)</td><td>Gap → Down → Backer.</td></tr>
+<tr><td>PST (LT on 31)</td><td>Backer — bypass DL, go directly to play-side LB.</td></tr>
+<tr><td>BST (RT on 31)</td><td>Scoop-Backer — prevent backside pursuit.</td></tr>
+<tr><td>C</td><td>Gap → Down → Backer (even front: climbs to Mike).</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>When to Call / When Not to Call</h3>
+<div class="dd"><div class="do-b"><div class="hd">✓ CALL IT</div>Even front — center uncovered<br>LBs flowed hard outside on Buck<br>1st and 10 — identity base run<br>2nd and short — hits fast<br>Front-specific formation matched<br>After a long gain outside</div>
+<div class="dn-b"><div class="hd">✗ AVOID</div>Back-to-back reps — stunts kill it<br>Nose in A-gap (call Cardinal/Lance)<br>3rd and long — averages 4–5 yds<br>Inside the 5-yard line<br>When defense is stunting A-gap</div></div></div>
+<div class="ds"><h3>Front-Specific Trap Formation Guide</h3>
+<table class="at"><thead><tr><th>Scouted Front</th><th>Call This</th><th>Puller</th></tr></thead><tbody>
+<tr><td>Even (E-N-T-E), W-M-S LBs</td><td>Louisville Dart Y 21</td><td>RG pulls. C uncovered — climbs to Mike.</td></tr>
+<tr><td>Even (E-N-T-E), S-M-W LBs</td><td>Tiger Dart Y 21</td><td>RG pulls.</td></tr>
+<tr><td>Odd (E-T-N-E), S-M-W LBs</td><td>Cardinal Dart Y 21</td><td>LG pulls. C covered by nose — blocks him.</td></tr>
+<tr><td>Odd (E-T-N-E), W-M-S LBs</td><td>Lance Y Dart 22</td><td>LG pulls. Odd front from TE Right side.</td></tr>
+<tr><td>Even close</td><td>LA Close Y Dart 21</td><td>RG pulls. Tight 4-back pre-snap.</td></tr>
+<tr><td>4-4 loaded box</td><td>Check to RPO or Waggle</td><td>Do not force Trap into 8 in the box.</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Trap 2nd Man (Plays 23–30)</h3>
+<div class="rb gd"><strong>Concept:</strong> Full Trap action — pull, 3-back dive path, QB reverse-out — but the ball goes to the 4-back (or Y on Dartski) sweeping outside. The 3-back's fake IS the play.</div>
+<table class="at"><thead><tr><th>Position</th><th>Assignment</th></tr></thead><tbody>
+<tr><td>3-BACK</td><td>Run FULL Trap footwork at full speed. Windback into backside A-gap after fake. DO NOT break character — ever.</td></tr>
+<tr><td>4-BACK (or Y)</td><td>On snap: run THROUGH FB alignment. Receive ball. Attack the edge at full sprint.</td></tr>
+<tr><td>OL</td><td>Zone blocking — NOT the base Trap pull.</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Trap 2nd Option (Plays 31–34)</h3>
+<div class="em">WEEK 4+ INSTALL ONLY. Most complex concept in the playbook.<br><br>Adds a pitch-key option read to Trap 2nd Man. QB executes Trap action, 3-back fakes, QB reads a second defender for keep-or-pitch.<br><br>QB must be able to describe what the read key did on EVERY single rep before this installs.</div></div>`},
+
+buck:{t:'Buck Sweep (35–56)',h:`
+<div class="dh"><h2>Buck Sweep</h2><p>The signature play of the Wing-T. Two guards pull. The 3-back freezes the interior. The 2-back L-cuts behind the wing. Every element must be timed — execution wins this play, not athleticism.</p><div class="br"><span class="bg">Plays 35–56</span><span class="bg">2 Pullers</span><span class="bg">L-Cut</span><span class="bg">RPO Capable</span></div></div>
+<div class="ds"><h3>Coaching Truth</h3>
+<div class="callout">"The Trap fake makes the Buck Sweep work. Without a convincing 3-back Trap fake, the inside LBs are unblocked and waiting in the alley. The L-cut must happen AFTER 2 steps. Players who cut early miss the entire crease."</div></div>
+<div class="ds"><h3>Buck Left (35) — Full Assignments</h3>
+<table class="at"><thead><tr><th>Position</th><th>Assignment</th></tr></thead><tbody>
+<tr><td>QB</td><td>Rev out, seat ball, BRUSH FB (SELL IT), hand to HB on midline, fake Waggle away.</td></tr>
+<tr><td>X</td><td>Stalk block CB — you are the perimeter seal.</td></tr>
+<tr><td>4-BACK (Wing)</td><td>Gap → Down → Backer. Your block creates the cutback lane.</td></tr>
+<tr><td>3-BACK</td><td>Fake Trap AWAY. Run THROUGH the line of scrimmage. Fill for BSG. FULL CONVICTION.</td></tr>
+<tr><td>2-BACK</td><td>Pivot 2 steps through FB alignment. Get handoff on midline. Follow path to L-Cut behind wingback.</td></tr>
+<tr><td>Y (LEFT)</td><td>Gap → Down → Backer — play-side edge seal.</td></tr>
+<tr><td>LG (PSG)</td><td>Pull → KICK FORCE — attack EMOL inside shoulder, drive him outward.</td></tr>
+<tr><td>RG (BSG)</td><td>Pull → LEAD ALLEY — behind kickout, climb to first force/OLB/DB outside.</td></tr>
+<tr><td>C</td><td>FIRE-ON-AWAY — burst into backside A-gap at snap. Stop backside pursuit.</td></tr>
+<tr><td>LT (PST)</td><td>Gap → Down → Backer.</td></tr>
+<tr><td>RT (BST)</td><td>CUTOFF — body in backside DE's path. Hold him 3–4 seconds.</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Buck Read Tag</h3>
+<div class="rb gn"><strong>Add when:</strong> BSE is crashing hard inside on every Buck Sweep rep — the keep is free.<br><strong>Remove when:</strong> BSE is disciplined and maintaining outside leverage — GIVE the ball every time.<br><strong>Cost:</strong> Zero from OL or backs — zero cost, free weapon.</div></div>
+<div class="ds"><h3>All Buck Sweep Variants</h3>
+<table class="at"><thead><tr><th>Plays</th><th>Formation</th><th>Key Difference</th></tr></thead><tbody>
+<tr><td>35/36</td><td>Wing L/R</td><td>Base under-center. 2-back carries.</td></tr>
+<tr><td>37/38</td><td>Navy/Army</td><td>3-back carries (39/38 Buck). QB rolls.</td></tr>
+<tr><td>39/40</td><td>LA/Ram gun</td><td>2-back carries from gun alignment.</td></tr>
+<tr><td>41/42</td><td>LA/Ram Close</td><td>Tight 4-back pre-snap. Same assignments.</td></tr>
+<tr><td>43/44</td><td>LA/Ram Close + RPO</td><td>Zap (43) or Sail (44) route tag. QB reads pre-snap.</td></tr>
+<tr><td>45/46</td><td>Lance/Spear</td><td>LG pulls on Lance. RG pulls on Spear. Odd front.</td></tr>
+<tr><td>47/48</td><td>Lance/Spear Close + RPO</td><td>Sail Out (47) or Zap (48). Odd-front RPO.</td></tr>
+<tr><td>49/50</td><td>Louisville/Cardinal + 3-back motion</td><td>3-back Liz/Rip pre-snap declares coverage. Even front.</td></tr>
+<tr><td>51/52</td><td>LSU/Tiger</td><td>Film-specific front variants.</td></tr>
+<tr><td>55/56</td><td>Louisville/Cardinal Read</td><td>Three threats: sweep, QB keep, motion.</td></tr>
+</tbody></table></div>`},
+
+power:{t:'Power Series (57–74)',h:`
+<div class="dh"><h2>Power Series</h2><p>The physical statement of the offense. Buck Sweep attacks outside. Trap attacks inside. Power attacks the B-gap between them. The three plays form a triangle the defense cannot cover all at once.</p><div class="br"><span class="bg">Plays 57–74</span><span class="bg">Wrap Puller</span><span class="bg">Kickout</span><span class="bg">Counter Step</span></div></div>
+<div class="ds"><h3>Power Left (57) — Full Assignments</h3>
+<table class="at"><thead><tr><th>Position</th><th>Assignment</th></tr></thead><tbody>
+<tr><td>QB</td><td>Reverse out → handoff → carry fake with authority.</td></tr>
+<tr><td>X</td><td>Block FS.</td></tr>
+<tr><td>4-BACK</td><td>Outside Backer.</td></tr>
+<tr><td>3-BACK</td><td>KICK OUT first defender outside TE. Attack inside shoulder. Drive outward.</td></tr>
+<tr><td>2-BACK</td><td>Counter step (ONE step away). Then follow the wrap puller through the B-gap.</td></tr>
+<tr><td>Y</td><td>Gap → Down → Backer.</td></tr>
+<tr><td>LG (BSG)</td><td>WRAP PULLER — tight rump line → insert through hole → first LB inside-out.</td></tr>
+<tr><td>RT (BST)</td><td>PULL CHECK — read EMOL. Kick or Log with full commitment.</td></tr>
+<tr><td>LT (PST)</td><td>Gap → Down → Backer.</td></tr>
+<tr><td>RG (PSG)</td><td>Gap → Down → Backer.</td></tr>
+<tr><td>C</td><td>Block Away A-gap — prevent DL pursuit.</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>The Triangle Concept</h3>
+<div class="rb gd">Trap → forces LBs inside<br>Buck Sweep → forces LBs outside<br>Power → hits the B-gap BETWEEN them<br><br>When a defense over-pursues on Buck Sweep → call Power. When they adjust to Power → Buck Sweep is open. The Trap is always the answer to a stacked box.</div></div>
+<div class="ds"><h3>All Power Variants</h3>
+<table class="at"><thead><tr><th>Plays</th><th>Key Notes</th></tr></thead><tbody>
+<tr><td>57/58</td><td>Wing Left/Right. Base under-center Power.</td></tr>
+<tr><td>59/60</td><td>Navy Red / Army Blue. 3-back carries (37/36 Power).</td></tr>
+<tr><td>61/62</td><td>LA / Ram gun. Same wrap structure.</td></tr>
+<tr><td>63/64</td><td>Trips formation. Removes defender from box.</td></tr>
+<tr><td>65/66</td><td>Louisville/Cardinal + Liz/Rip motion. Coverage declaration.</td></tr>
+<tr><td>67/68</td><td>Power Read Navy/Army. BSE read added.</td></tr>
+<tr><td>69/70</td><td>Power Read LA/Ram. Read tag on gun Power.</td></tr>
+<tr><td>71/72</td><td>Power Read Trips variants.</td></tr>
+<tr><td>73/74</td><td>Power Read Louisville/Cardinal. THREE threats: wrap, QB keep, Liz/Rip motion.</td></tr>
+</tbody></table></div>`},
+
+belly:{t:'Belly Series (80–95)',h:`
+<div class="dh"><h2>Belly Series</h2><p>The option-based inside read. QB rides the 3-back and reads the first DL outside the play-side guard. Belly bridges the Wing-T physical identity with the option read game.</p><div class="br"><span class="bg">Plays 80–95</span><span class="bg">Read Option</span><span class="bg">Dart Motion</span></div></div>
+<div class="ds"><h3>QB Read Teaching</h3>
+<div class="rb gn"><strong>Step 1:</strong> 30 reps of GIVING only. Path must be automatic before adding the read.<br><strong>Step 2:</strong> Slow-motion read. Ride 2 full seconds. Verbalize: "He's attacking... pull."<br><strong>Step 3:</strong> Speed up over 3–5 practices. Never two of the same read key in a row.<br><strong>Default:</strong> ALWAYS GIVE. If the QB cannot describe what the read key did — he was guessing.</div></div>
+<div class="ds"><h3>Belly Left Dart (80) — Core Assignments</h3>
+<table class="at"><thead><tr><th>Position</th><th>Assignment</th></tr></thead><tbody>
+<tr><td>QB</td><td>Rev, ride FB, read 1st DL outside PSG, give or keep, fake option.</td></tr>
+<tr><td>4-BACK</td><td>Dart motion. Get in option pitch relationship with QB.</td></tr>
+<tr><td>3-BACK</td><td>Step, Crossover. Get handoff from QB. READ 1st DL outside PSG.</td></tr>
+<tr><td>2-BACK</td><td>1st backer playside of center.</td></tr>
+<tr><td>Y</td><td>Scoop.</td></tr>
+<tr><td>C</td><td>Zone.</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>All Belly Variants</h3>
+<table class="at"><thead><tr><th>Plays</th><th>Formation</th><th>Key Difference</th></tr></thead><tbody>
+<tr><td>80/81</td><td>Wing Left Dart / Wing Right Orbit</td><td>3-back reads. 4-back Dart or Orbit.</td></tr>
+<tr><td>82/83</td><td>LA Y Dartski / Ram Y Orbitski</td><td>TE takes Dartski or Orbitski — TE as pitch option.</td></tr>
+<tr><td>84/85</td><td>Lance Close / Spear Close</td><td>Odd-front Belly.</td></tr>
+<tr><td>86/87</td><td>Louisville / Cardinal Close</td><td>Even-front Belly. Y Dart built in.</td></tr>
+<tr><td>88–91</td><td>2nd Man Left/Right/LA/Ram</td><td>Belly fake to 3-back — ball goes to 4-back/Y outside.</td></tr>
+<tr><td>92–95</td><td>Lance/Spear/Cardinal Close</td><td>Advanced Belly 2nd Man from front-specific formations.</td></tr>
+</tbody></table></div>`},
+
+aseries:{t:'A-Series (96–98)',h:`
+<div class="dh"><h2>A-Series — Power-Option Hybrid</h2><p>The most unique play family in the playbook. Exists nowhere else. Combines Power blocking, a Buck Sweep-style kick-pull, and a live pitch option. No base defensive alignment has a clean answer to both threats simultaneously.</p><div class="br"><span class="bg">Plays 96–98</span><span class="bg">Completely Unique</span><span class="bg">1 Lateral Step</span><span class="bg">Live Pitch</span></div></div>
+<div class="ds"><h3>The Mechanic — 3-Back</h3>
+<div class="em">3-BACK: Take 1 lateral step toward play side. Then run for the TAIL (outside hip) of the TE.<br><br>This is NOT the Trap two-step. NOT the Buck L-cut. NOT the Power counter step.<br>It is a completely new technique. Drill separately. It will NOT transfer from any other play.</div></div>
+<div class="ds"><h3>A Left (97) — Full Assignments</h3>
+<table class="at"><thead><tr><th>Position</th><th>Assignment</th></tr></thead><tbody>
+<tr><td>QB</td><td>Rev out. Hand ball to FB (3-back). Fake option outside.</td></tr>
+<tr><td>X</td><td>Block FS.</td></tr>
+<tr><td>4-BACK</td><td>Backer.</td></tr>
+<tr><td>3-BACK</td><td>Take 1 lateral step LEFT. Take ball. Run for tail of LEFT Y/TE.</td></tr>
+<tr><td>2-BACK</td><td>2 steps through FB alignment. Get into PITCH OPTION RELATIONSHIP with QB.</td></tr>
+<tr><td>Y (LEFT)</td><td>Gap → Down → Backer.</td></tr>
+<tr><td>LG (PSG — KICK)</td><td>Pull and kick 1st man outside TE.</td></tr>
+<tr><td>C</td><td>Fire-on-away.</td></tr>
+<tr><td>LT</td><td>Scoop.</td></tr>
+<tr><td>RG</td><td>Gap → Down → Backer.</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>The Defensive Conflict</h3>
+<div class="rb gd">A kick-pull creating a Power-style lane AND a live pitch option on the same snap. No base defense handles both cleanly. The PSG kick either creates a lane or frees the pitch — the defense gives you one or the other.</div></div>`},
+
+sweep:{t:'Speed Sweep (75–77)',h:`
+<div class="dh"><h2>Speed Sweep</h2><p>The perimeter constraint to Power. When the OLB crashes inside on every Power snap — Speed Sweep hits the edge he just cleared. Timing is everything. The ball is snapped to the motion player's timing, not a cadence count.</p><div class="br"><span class="bg">Plays 75–77</span><span class="bg">Rip/Liz Motion</span><span class="bg">Motion Snap</span></div></div>
+<div class="ds"><h3>Critical Timing Rule</h3>
+<div class="em">SNAP KEY: Ball is snapped on the OUTSIDE LEG of the BSG — not the center!<br><br>4-back must be at FULL SPRINT when the ball is snapped. No slow starts. The handoff happens at full speed.</div></div>
+<div class="ds"><h3>Speed Sweep Louisville Y Rip Trap (75) — Assignments</h3>
+<table class="at"><thead><tr><th>Position</th><th>Assignment</th></tr></thead><tbody>
+<tr><td>QB</td><td>Motion snap on outside leg of BSG. Hand off to 4-back. Fake Trap. Waggle away.</td></tr>
+<tr><td>X</td><td>Block CB.</td></tr>
+<tr><td>4-BACK</td><td>Rip motion. Take ball at full sprint. Attack edge.</td></tr>
+<tr><td>3-BACK</td><td>Fake Trap Away — full conviction. Must sell the Trap dive.</td></tr>
+<tr><td>2-BACK</td><td>Block #2 from sideline.</td></tr>
+<tr><td>LG</td><td>PULL AND WALL backer.</td></tr>
+<tr><td>All other OL</td><td>Zone blocking.</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>X Over Tag (Plays 76–77)</h3>
+<div class="rb"><strong>Navy/Army X Over:</strong> X receiver aligns on same side as Y — creates unbalanced 6-man blocking surface. 3-back takes the sweep. Extra blocker is a free weapon — zero new OL rules.</div></div>`},
+
+xx:{t:'XX Double Handoff (78–79)',h:`
+<div class="dh"><h2>XX — Double Handoff Counter</h2><p>The defense keys the initial backfield flow and is wrong when the ball reverses to the 4-back. Best called after 3+ consecutive inside runs when defense is reading backfield fast.</p><div class="br"><span class="bg">Plays 78–79</span><span class="bg">Counter</span><span class="bg">Misdirection</span></div></div>
+<div class="ds"><h3>XX Left (78) — Assignments</h3>
+<table class="at"><thead><tr><th>Position</th><th>Assignment</th></tr></thead><tbody>
+<tr><td>QB</td><td>Open to 2-back and hand ball off.</td></tr>
+<tr><td>X</td><td>Block FS.</td></tr>
+<tr><td>4-BACK</td><td>DROP STEP and get ball from 2-back. Decisively.</td></tr>
+<tr><td>3-BACK</td><td>Fill for pullers.</td></tr>
+<tr><td>2-BACK</td><td>Get handoff from QB. Hand ball off to 4-back.</td></tr>
+<tr><td>Y</td><td>Pull and wall backer.</td></tr>
+<tr><td>RT</td><td>Lead-backer.</td></tr>
+<tr><td>LT</td><td>PULL + TRAP: pull and trap 1st man outside tackle.</td></tr>
+<tr><td>C</td><td>Post-Lead.</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Coaching Points</h3>
+<div class="rb"><strong>Two handoffs = two fumble risk points.</strong> Avoid in rain or bad conditions.</div>
+<div class="rb"><strong>Best called</strong> after 3+ consecutive inside runs when defense is reading backfield movement fast.</div>
+<div class="rb"><strong>4-back must drop step decisively</strong> — half-steps result in missed exchanges. There is no second chance on this exchange.</div></div>`},
+
+counter:{t:'Counter (Play 120)',h:`
+<div class="dh"><h2>Counter — Louisville Dart Y 21 Trap</h2><p>The dedicated counter play. Louisville formation with 2-back taking a one-step false step away before redirecting to follow the trap puller. False step + arriving puller + redirect = textbook counter mechanism.</p><div class="br"><span class="bg">Play 120</span><span class="bg">False Step</span><span class="bg">Louisville Formation</span></div></div>
+<div class="ds"><h3>Assignments</h3>
+<table class="at"><thead><tr><th>Position</th><th>Assignment</th></tr></thead><tbody>
+<tr><td>QB</td><td>Hand ball to 2-back (HB). Gun.</td></tr>
+<tr><td>X</td><td>Block corner.</td></tr>
+<tr><td>4-BACK</td><td>Block corner (from Dart landing position).</td></tr>
+<tr><td>3-BACK</td><td>Backer — play-side LB.</td></tr>
+<tr><td>2-BACK</td><td>ONE false step AWAY from the play. Redirect. Follow RG trap puller to 1-hole.</td></tr>
+<tr><td>Y</td><td>Block FS.</td></tr>
+<tr><td>RG (TRAP PULLER)</td><td>Pull flat → trap first DL past center.</td></tr>
+<tr><td>LG</td><td>Backer.</td></tr>
+<tr><td>LT</td><td>Backer.</td></tr>
+<tr><td>RT</td><td>Scoop-Backer.</td></tr>
+<tr><td>C</td><td>Post-Lead.</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Critical Details</h3>
+<div class="em">The false step is ONE step — not two, not a shuffle. ONE hard step away. Then redirect.<br><br>INSTALL ONLY after Louisville Trap is established. The counter only works because the defense has been reading the Trap pull direction — the false step exploits that conditioning.</div></div>`},
+
+waggle:{t:'Waggle / Play-Action',h:`
+<div class="dh"><h2>Waggle / Play-Action</h2><p>The play-action pass built off every run fake. The entire run game earns the Waggle. The Waggle is the dividend. A fake without a real run threat is a slow bootleg that averages 2 yards.</p></div>
+<div class="ds"><h3>The Rule</h3>
+<div class="callout">"Run the ball first. Then the fake works. Then the pass is open. A Waggle without an established run game is a slow bootleg averaging 2 yards."</div></div>
+<div class="ds"><h3>Waggle Variants</h3>
+<table class="at"><thead><tr><th>Play</th><th>Run Fake</th><th>QB Boot Direction</th></tr></thead><tbody>
+<tr><td>Left 29 Waggle Right (103)</td><td>Buck Sweep left</td><td>QB boots RIGHT. Flat → middle → throw away.</td></tr>
+<tr><td>Right 28 Waggle Left (111)</td><td>Buck Sweep right</td><td>QB boots LEFT. Mirror read.</td></tr>
+<tr><td>Left 31 Trap Copy (114)</td><td>Trap left</td><td>Designed to look identical to Trap Left — same play until the boot.</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>QB Mechanics</h3>
+<div class="rb"><strong>1. Fake quality IS the play.</strong> A weak reverse-out fake is just a slow bootleg averaging 2 yards.<br><strong>2.</strong> Waggle is most effective after 3+ consecutive runs. The defense has committed — the boot punishes their commitment.<br><strong>3. Read order:</strong> Flat first → middle/dig second → throw away third. NEVER back across your body.</div></div>
+<div class="ds"><h3>When to Call</h3>
+<div class="dd"><div class="do-b"><div class="hd">✓ CALL IT</div>After 3+ consecutive runs<br>Safety walked into the box<br>2nd and medium<br>CB playing tight run support<br>Seam is open behind safety</div>
+<div class="dn-b"><div class="hd">✗ AVOID</div>Before establishing the run<br>1st and 10 (save for later)<br>Rain/slippery field for boot<br>QB who won't sell the fake</div></div></div>`},
+
+routes:{t:'Route Concepts',h:`
+<div class="dh"><h2>Route Concepts</h2><p>Every pass concept earns its value from a run action the defense has been forced to respect. Before calling any pass, ask: "What run action makes this throw available?"</p></div>
+<div class="ds"><h3>Flood A — vs Cover 2 / 3</h3>
+<div class="rb bl"><strong>Concept:</strong> Three levels overload one safety — one defender cannot cover high, medium, and flat simultaneously.<br><strong>Formations:</strong> Ram/LA Flood A (102/110), Trips Red Flood A (104), Trips Blue Flood A (105).<br><strong>Beats:</strong> Cover 2 and Cover 3 by overloading the flat-to-safety zone.</div></div>
+<div class="ds"><h3>Mesh — vs Man Coverage</h3>
+<div class="rb bl"><strong>Concept:</strong> Two crossing receivers create rubs that eliminate man-coverage leverage. Separation is guaranteed.<br><strong>Formations:</strong> Trips Right Red (108), Trips Left Blue (112).<br><strong>Beats:</strong> Cover 0, Cover 1, Cover 2 Man.</div></div>
+<div class="ds"><h3>3 Bubble RPO — vs Cover 4</h3>
+<div class="rb bl"><strong>Concept:</strong> Trips bubble screen. QB reads CB pre-snap. CB plays coverage = bubble. CB walks up = give the run.<br><strong>Formations:</strong> Trips Right Red (109), Trips Left Blue (113).</div></div>
+<div class="ds"><h3>Zap / Sail (RPO on Buck Sweep)</h3>
+<div class="rb gd"><strong>ZAP (43, 48):</strong> Press coverage beater.<br><strong>SAIL (44, 47):</strong> Deep seam — vs single-high where safety rotates to Buck Sweep.<br><strong>OL rule:</strong> ALWAYS run the sweep. QB reads one defender pre-snap only.</div></div>
+<div class="ds"><h3>Brett Passing Packages</h3>
+<div class="wb">NEVER call a Brett package without confirming the coverage. Brett Cover 2 into Cover 3 is a pick.</div>
+<table class="at"><thead><tr><th>Package</th><th>Coverage Target</th><th>QB Read Order</th></tr></thead><tbody>
+<tr><td>Brett Cover 3 (115)</td><td>Cover 3</td><td>2 (CB off) → Y (CB press) → 4 → X → 3 (checkdown)</td></tr>
+<tr><td>Brett Cover 4 (116)</td><td>Cover 4</td><td>Y → 4 → 2 → X</td></tr>
+<tr><td>Brett Cover 2 (117)</td><td>Cover 2</td><td>Y (quick) → 4 → 3 → X → 2 (checkdown)</td></tr>
+<tr><td>Brett Cover 2 #2 (119)</td><td>Cover 2</td><td>Y → 4 → 3 → X → 2</td></tr>
+</tbody></table></div>`},
+
+coverage:{t:'Coverage Read Guide',h:`
+<div class="dh"><h2>Coverage Read Guide</h2><p>Know the coverage before you call the play. Every pass concept was designed for a specific defensive structure. The wrong concept into the wrong coverage is a turnover.</p></div>
+<div class="ds"><h3>Coverage Quick Reference</h3>
+<table class="at"><thead><tr><th>Coverage</th><th>Primary Call</th><th>Avoid</th></tr></thead><tbody>
+<tr><td>Cover 0 (Man, no help)</td><td>Mesh, All Slants, Fade — ball out in 1.5 sec</td><td>Any concept with more than a 3-step drop</td></tr>
+<tr><td>Cover 1 (Man, single high)</td><td>Mesh, Levels, Sail tag on Buck</td><td>Slow-developing route combos</td></tr>
+<tr><td>Cover 2</td><td>Flood A, Brett Cover 2, Corner off PA</td><td>Mesh — man route, not zone route</td></tr>
+<tr><td>Cover 2 Man</td><td>Mesh, Drive + Wheel</td><td>Flood — zone concept</td></tr>
+<tr><td>Cover 3</td><td>Flood C, Curl-Flat, Brett Cover 3</td><td>Mesh against zone</td></tr>
+<tr><td>Cover 4 (Quarters)</td><td>3 Bubble RPO, Brett Cover 4, Quick game</td><td>Deep shots — four deep defenders take them</td></tr>
+</tbody></table></div>
+<div class="ds"><h3>Motion as Coverage Declare</h3>
+<div class="rb gn"><strong>Dart motion:</strong> Man = CB follows. Zone = nobody moves. Definitive coverage tell.<br><strong>Orbit motion:</strong> Man = full defender follows arc. Zone = stationary. Maximum info.<br><strong>Heavy motion:</strong> Slow walk. Less alarming — reveals true coverage without tipping a speed threat.</div></div>
+<div class="ds"><h3>Pre-Snap Reads</h3>
+<div class="rb"><strong>Count the box:</strong> 8+ = RPO or Waggle. Running into 8 without an answer is a negative play.<br><strong>Safety walked in pre-snap?</strong> Waggle. The seam behind him is open.<br><strong>CB playing tight run support?</strong> Corner route or Fade off play-action.</div></div>`}
+};
+
+// ── QUIZ DATA ──
+var QSETS={
+terminology:[
+  {q:'What does GDB stand for and what is the correct order?',opts:['Gap-Drive-Block: attack the gap directly','Gap-Down-Backer: gap first, down, then backer','Guard-Down-Block: guard blocks down on every play','Go-Down-Block: always run your block downhill'],a:1,exp:'GDB = Gap → Down → Backer. Check your inside gap FIRST every snap. If empty, step down. If nothing there, climb to the backer. One rule against any front.'},
+  {q:'What is the RUMP LINE?',opts:['A drill where backs run behind the linemen','A sideline boundary on sweep plays','The imaginary line along the back of OL pads that all pullers stay tight to','The line of scrimmage itself'],a:2,exp:'The Rump Line prevents pullers from taking wasted depth. Tight path = faster fit = cleaner run. If you bubble off the Rump Line — you are slow and your block arrives late.'},
+  {q:'NAVY formation: where is the TE?',opts:['On the RIGHT side','In the gun formation','On the LEFT side of the line','As a wide receiver'],a:2,exp:'NAVY = TE LEFT. ARMY = TE RIGHT. This applies under center. LA = TE Left in gun. Ram = TE Right in gun.'},
+  {q:'What does the number "31" mean in "31 TRAP"?',opts:['3rd and 1 situation','3-back carries through the 1-hole (left A-gap)','Zone 3, play 1','3rd play, 1st drive'],a:1,exp:'First digit = the back (3 = Fullback). Second digit = the hole (1 = left A-gap). ODD holes = LEFT. EVEN holes = RIGHT.'},
+  {q:'What is the EMOL?',opts:['Early Motion on the Line','Extra man Outside Linebackers','End Man on the Line of Scrimmage — the kickout target','Every Man on the Left'],a:2,exp:'EMOL = End Man on the Line of Scrimmage. The kickout target on Buck Sweep, Power, and A-series. The PSG reads the EMOL to decide Kick or Log.'},
+  {q:'What is a WAGGLE?',opts:['A running play where the QB keeps the ball','QB boots away from the run fake — live pass or full fake','A special teams motion play','A WR route that breaks inside'],a:1,exp:'The Waggle is play-action built off every run fake. QB boots AWAY from the run direction. Read: flat → middle → throw away. NEVER back across your body.'},
+  {q:'What is the L-CUT?',opts:['A receiver route breaking left','A QB fake on the keeper play','The 2-back path on Buck Sweep: 2 steps through FB alignment, then cuts behind the wing','A lineman inside cut block'],a:2,exp:'The L-Cut is everything on Buck Sweep. Two steps THROUGH the FB alignment — then cut behind the wing. Players who cut early miss the entire crease. Non-negotiable.'},
+  {q:'In LOUISVILLE formation, which guard pulls?',opts:['Left Guard','Right Guard','Both guards pull','Neither guard'],a:1,exp:'LOUISVILLE = TE LEFT, RG pulls (21 Trap). CARDINAL = TE RIGHT, LG pulls. On Cardinal — the RG is NOT the puller. Getting this wrong loses the play.'},
+  {q:'What does the WRAP pull do in Power?',opts:['Trap the first DL past center','Kick the EMOL outward','Insert through the hole and block the play-side LB inside-out','Wall off the pursuing backer'],a:2,exp:'The WRAP pull (BSG on Power) inserts through the hole created by the FB kickout, then squares up the play-side LB inside-out. Tight rump line on the insert. Clean fit = vertical run.'},
+  {q:'What is SERIES FOOTBALL?',opts:['Running multiple plays in a series of downs','Every play family has a base, complement, and constraint — stop one and the other two open','Running the ball 10 times in a row','A spread passing system'],a:1,exp:'Series football = every play family is connected. The Trap makes Buck Sweep possible. Buck Sweep makes Power possible. Power makes Waggle open. Every defensive adjustment opens a different window.'}
+],
+formations:[
+  {q:'"WING RIGHT — 28 BUCK" — where is the TE?',opts:['On the left side','On the right side','In the gun formation','Split wide as a receiver'],a:1,exp:'WING RIGHT = TE on the RIGHT side. The 4-back (wing) aligns 1 yard outside the TE and 1 yard off the line of scrimmage.'},
+  {q:'"RAM BLUE — 26 POWER" — where does the RB align?',opts:['Right of the QB','Left of the QB — BLUE = RB left of QB','Under center next to the QB','Outside at wide receiver'],a:1,exp:'RAM = gun, TE RIGHT. BLUE = RB to the LEFT of the QB. Always decode formation first (TE side, gun/under-center), then decode Red/Blue for RB side.'},
+  {q:'ODD-numbered holes go to which side?',opts:['Right side','Left side — odd holes = left, even holes = right','Depends on the formation','There are no odd-numbered holes'],a:1,exp:'ODD holes (1,3,5,7,9) = LEFT side. EVEN holes (2,4,6,8,0) = RIGHT side. This is the foundation of the entire numbering system.'},
+  {q:'NAVY vs LA — what is the key difference?',opts:['Navy has TE right, LA has TE left','Both have TE LEFT but Navy is under center, LA is in the gun','They are the same formation','Navy is trips, LA is single receiver'],a:1,exp:'Both NAVY and LA have the TE on the LEFT side. The difference is the snap position — Navy is under center, LA is in the gun. Know the snap position.'},
+  {q:'Which formation targets an EVEN defensive front?',opts:['Lance','Spear','Louisville','LSU/Tiger only'],a:2,exp:'LOUISVILLE and CARDINAL target EVEN fronts (E-N-T-E). LANCE and SPEAR target ODD fronts (E-T-N-E). The formation name tells you the target front.'},
+  {q:'What makes the A-Series unique?',opts:['It uses three pulling guards','It combines Power blocking with a live pitch option — 3-back takes one lateral step','It is a pure passing formation','It removes the TE from the formation'],a:1,exp:'The A-Series is a Power-option hybrid that exists nowhere else. PSG kicks the EMOL AND the 2-back is a live pitch option on the same snap. No base defense has a clean answer to both threats.'},
+  {q:'In "TRIPS RIGHT RED" — what does RED mean?',opts:['Play direction is to the right','The team is in their red zone package','RB aligns to the RIGHT of the QB','Red = TE on the right'],a:2,exp:'In gun formations, RED always means the RB is to the RIGHT of the QB. BLUE = RB to the LEFT. The TE side is coded by the formation family name.'},
+  {q:'What is the MAGIC SHIFT system?',opts:['A trick play where two players swap positions','[Origin] MAGIC [Destination] + play — snap at 3 seconds after shift','A special pass protection scheme','A pre-snap timeout call'],a:1,exp:'MAGIC = formation shift that forces the defense to re-identify, re-communicate, and re-align. Snap at 3 seconds — most high school defenses cannot complete communication in that time.'}
+],
+assignments:[
+  {q:'You are the BSG on 31 TRAP. What is your job?',opts:['Drive block the man directly over you','Pull flat and trap the first DL past center','Pull and kick out the EMOL','Climb to the backside linebacker'],a:1,exp:'On Trap, the BSG (LG on Trap Left) pulls flat and hard — the fastest pull in the offense. Target the first DL past center. Attack his outside number. Drive him back into the hole. If you miss — the play is dead.'},
+  {q:'You are an OL and there is a defender in your inside gap. First step in GDB?',opts:['Step down to the next defender inside','Climb immediately to the backer','Block the gap defender immediately — no hesitation','Call for help from the adjacent lineman'],a:2,exp:'GDB Step 1: If a defender is in your gap — he is YOURS. No hesitation. Block him immediately. This stops penetration before it develops.'},
+  {q:'You are the BSG on 25 POWER. What pull type do you use?',opts:['Trap pull','Wrap pull — insert through the hole to the play-side LB inside-out','Lead pull','Wall pull'],a:1,exp:'Power = BSG WRAP pull. Pull tight off the Rump Line. Insert through the hole created by the FB kickout. Square up the play-side LB inside-out. Maintain leverage. Finish.'},
+  {q:'You are the 2-back on BUCK SWEEP. What is your path?',opts:['Sprint straight to the outside immediately','Run two steps through the FB alignment, then cut behind the wing','Hit the B-gap directly','Follow the pulling guard from behind without a cut'],a:1,exp:'The L-Cut. TWO steps through the FB alignment — THEN cut behind the wing. Players who cut before the second step miss the entire crease. The crease is not there until after step two.'},
+  {q:'The EMOL squeezes hard inside on POWER. Pull Check decision?',opts:['Kick him outward as planned','LOG him — seal inside, let ball bounce wide','Stop and reset your block assignment','Block the next defender instead'],a:1,exp:'Pull Check: EMOL squeezes/wrong-arms = LOG. Hook and seal him inside. Get your body outside. The ball bounces wide. Half decisions lose — once you read LOG, commit completely.'},
+  {q:'You are the 3-back on A-LEFT. What is your mechanic?',opts:['Two-step trap footwork into the hole','L-cut behind the TE like Buck Sweep','One lateral step toward play side, then run for the tail of the LEFT TE','Counter step away, then follow the wrap puller'],a:2,exp:'The A-Series lateral step is completely unique. ONE lateral step toward play side — then run for the TAIL (outside hip) of the TE. NOT the Trap two-step, NOT the L-cut, NOT the counter step. Drill it separately.'},
+  {q:'You are the CENTER on BUCK SWEEP. What is your assignment?',opts:['Block the nose tackle directly in front of you','Pull and lead into the alley','FIRE-ON-AWAY — burst into the backside A-gap at snap','Block the play-side linebacker directly'],a:2,exp:'On Buck Sweep, the Center fires into the backside A-gap at the snap. This contacts the backside DL before he can redirect and chase the sweep. Your job is to stop pursuit.'},
+  {q:'You are the 4-back after Dart motion lands. Play is Louisville Trap 21. What do you do?',opts:['Carry the ball — you are the ball carrier on Louisville','Block the corner — the 2-back has the ball','Run to pitch relationship — option is live','Fake a sweep'],a:1,exp:'4-back on Louisville gun Trap: Dart motion → land → BLOCK THE CORNER. The 2-back (HB) is the ball carrier. You are a blocker from your Dart landing position.'},
+  {q:'You are the QB on BELLY LEFT. The read key stays upfield. What do you do?',opts:['Give the ball every time regardless','KEEP the ball — DL staying upfield means the dive is contained','Pull and run the option pitch to the 4-back','Throw the Waggle pass immediately'],a:1,exp:'Belly read: DL stays upfield/contains = KEEP. But DEFAULT is always GIVE. If you cannot describe what the read key did — you were guessing.'},
+  {q:'You are the LG on CARDINAL formation 21 Trap. What do you do?',opts:['Gap → Down → Backer (PSG assignment)','TRAP PULL — LG pulls on Cardinal, not RG','Block away A-gap like the center','Post-Lead the first backer'],a:1,exp:'On CARDINAL — LG pulls (not RG). LG is the trap puller on Cardinal and Lance. On Louisville — RG pulls. Getting this backwards loses the play.'}
+],
+situational:[
+  {q:'You have 8+ defenders in the box on 1st and 10. What is the right call?',opts:['Run Power anyway — impose your will','Call Trap — it hits fast before they react','RPO Bubble or Waggle — the numbers say throw','Run Speed Sweep — go around the box'],a:2,exp:'Rule #1: NEVER run into 8 in the box without an RPO or Waggle answer. The numbers are against you. Bubble or Waggle are the correct answers — the count outside is in your favor.'},
+  {q:'LBs have over-pursued on Buck Sweep for three straight plays. What do you call next?',opts:['Buck Sweep again — keep what is working','31/32 Trap — the backside gap is vacated','Waggle only','Speed Sweep to clear the edge'],a:1,exp:'When LBs over-pursue outside for Buck Sweep — the backside gap is vacated. Trap hits the gap they left. This is series football: every adjustment the defense makes opens a different window.'},
+  {q:'It is 3rd and 1. The defense is expecting a run. What do you NOT do?',opts:['Run Power — your best inside run','Run Trap — guaranteed yards','Call a trick play','Run QB sneak'],a:2,exp:'Rule #4: NEVER use a trick play on 3rd and 1. Run your best play. Impose your will. Trick plays on 3rd and 1 tell your OL they cannot get 1 yard.'},
+  {q:'The safety walked into the box right before the snap. What does this open?',opts:['Speed Sweep — run around him','Waggle — the seam behind him is now open','Triple Option — attack both edges','Flood A — attack the deep zone'],a:1,exp:'Safety walked into the box = Waggle is open. The seam behind him is vacated. Waggle after an established run game punishes over-committed safeties.'},
+  {q:'You want to call Brett Cover 2 but are not sure if the defense is in Cover 2. What do you do?',opts:['Call it anyway — Cover 2 is most common','Check to your best run play','Confirm the coverage with Dart motion first, then decide','Call the Waggle instead'],a:2,exp:'Rule #5: NEVER call a Brett package without confirming the coverage. Brett Cover 2 into Cover 3 is a pick. Use Dart or Orbit motion to declare the coverage first.'},
+  {q:'OLB starts crashing inside every snap to stop Power. What do you call?',opts:['Keep running Power — wear them down','Speed Sweep — the edge he is vacating is now open','Counter Louisville — misdirection off Power','Power Read — add the keep option'],a:1,exp:'When OLB crashes inside to stop Power = Speed Sweep. The edge he just vacated is open. This is the constraint relationship between Power and Speed Sweep.'},
+  {q:'It is 2nd and 7. You have been running the ball well. What do you call?',opts:['Same inside run — keep pounding','Go to your primary passing concept','Waggle or Flood A — built off established run','Trips formation and throw the ball'],a:2,exp:'2nd and medium after a successful run drive = Waggle or Flood A. The run game is established — the defense has committed. The Waggle punishes their commitment.'},
+  {q:'The defense is in Cover 0 (man, no help). What is your best pass call?',opts:['Flood A — three levels attack the safety zone','Brett Cover 3 package','Mesh — crossing routes create rubs that beat man coverage','Sail route on Buck Sweep'],a:2,exp:'Cover 0 (man, no help) = Mesh or All Slants. The ball must be out in 1.5 seconds. Mesh creates rubs/picks that eliminate man-coverage leverage.'}
+]};
+
+var qArr=[],qIdx=0,qScore=0,qAnswered=false;
+function startQ(t){qArr=QSETS[t]||[];qIdx=0;qScore=0;document.getElementById('quiz-menu').style.display='none';document.getElementById('quiz-active').style.display='block';document.getElementById('quiz-score').style.display='none';renderQ();}
+function renderQ(){
+  qAnswered=false;var q=qArr[qIdx];
+  if(!q){showScore();return;}
+  document.getElementById('qfill').style.width=(qIdx/qArr.length*100)+'%';
+  document.getElementById('qnum').textContent='Question '+(qIdx+1)+' of '+qArr.length;
+  document.getElementById('qtext').textContent=q.q;
+  document.getElementById('opts').innerHTML=q.opts.map((o,i)=>'<button class="opt" onclick="checkA('+i+',this)">'+o+'</button>').join('');
+  document.getElementById('exp').className='exp-box';
+  document.getElementById('qnext').className='q-next';
+}
+function checkA(i,btn){
+  if(qAnswered)return;qAnswered=true;var q=qArr[qIdx];
+  document.querySelectorAll('.opt').forEach((o,idx)=>{if(idx===q.a)o.classList.add('correct');});
+  if(i===q.a){qScore++;btn.classList.add('correct');}else{btn.classList.add('wrong');}
+  var e=document.getElementById('exp');
+  e.textContent=(i===q.a?'✓ Correct! — ':'✗ Not quite. ')+q.exp;
+  e.className='exp-box show';
+  document.getElementById('qnext').className='q-next show';
+}
+function nextQ(){qIdx++;renderQ();}
+function showScore(){
+  document.getElementById('quiz-active').style.display='none';document.getElementById('quiz-score').style.display='block';
+  var p=qScore/qArr.length;
+  document.getElementById('sc-num').textContent=qScore+'/'+qArr.length;
+  document.getElementById('sc-fb').textContent=p===1?'💪 Perfect score. You know this offense.':p>=.8?'Strong work. Review the ones you missed and run it again.':p>=.6?'Getting there. Study the concepts you missed — they matter in games.':'Keep working. Repetition is mastery. Every rep counts.';
+}
+function backQM(){document.getElementById('quiz-menu').style.display='block';document.getElementById('quiz-score').style.display='none';document.getElementById('quiz-active').style.display='none';document.getElementById('flash-active').style.display='none';}
+
+// ── FLASHCARDS ──
+var FLASH=[
+  {t:'GDB',d:'Gap → Down → Backer. Check inside gap first (every snap). Block down if empty. Climb to backer if clear. One rule against any front.'},
+  {t:'RUMP LINE',d:'The imaginary line along the back of OL pads. All pullers stay tight to it. No wasted depth. Tight path = faster fit = cleaner run.'},
+  {t:'NAVY',d:'TE on the LEFT side of the line. Under center.'},
+  {t:'ARMY',d:'TE on the RIGHT side of the line. Under center.'},
+  {t:'LOUISVILLE',d:'Gun. TE LEFT. Y Dart built in. RG pulls (21 Trap). Targets EVEN front (E-N-T-E). W-M-S LBs.'},
+  {t:'CARDINAL',d:'Gun. TE RIGHT. Y Dart built in. LG pulls (21 Trap). EVEN front mirror. S-M-W LBs.'},
+  {t:'LANCE',d:'Gun. TE RIGHT. Y Dart built in. LG pulls (22 Trap). Targets ODD front (E-T-N-E).'},
+  {t:'SPEAR',d:'Gun. TE LEFT. Y Dart built in. RG pulls (21 Trap). ODD front mirror.'},
+  {t:'EMOL',d:'End Man on the Line of Scrimmage. The kickout target on Buck Sweep, Power, and A-series.'},
+  {t:'L-CUT',d:"2-back's path on Buck Sweep: 2 steps through FB alignment THEN cut behind the wing. Not before step 2."},
+  {t:'WAGGLE',d:'QB boots away from the run fake. Read: flat → middle → throw away. Never back across body. Fake quality IS the play.'},
+  {t:'RIP / LIZ',d:'RIP = speed sweep RIGHT. LIZ = speed sweep LEFT. Ball snapped on outside leg of BSG. Must be at full sprint at snap.'},
+  {t:'WRAP PULL',d:'BSG on Power. Pull tight off Rump Line. Insert through the hole. Square up play-side LB inside-out. Maintain leverage. Finish.'},
+  {t:'FIRE-ON-AWAY',d:'Center fires into the backside A-gap on Buck Sweep and A-series. Stops backside pursuit before it develops.'},
+  {t:'A-SERIES LATERAL STEP',d:'3-back takes ONE lateral step toward play side, then runs for the TAIL of the TE. Not the Trap two-step. Not the L-cut. Drill separately.'},
+  {t:'TRAP PULL',d:'BSG on all Trap plays. Pull flat and hard — fastest pull in the offense. Target first DL past center. Attack outside number.'},
+  {t:'SERIES FOOTBALL',d:'Every play family: base + complement + constraint. When defense stops one — the other two open. Not variety — a trap.'},
+  {t:'MAGIC SHIFT',d:'[Origin] MAGIC [Destination] + play. Snap at 3 seconds. Defense cannot re-identify, re-communicate, and re-align in time.'}
+];
+var fIdx=0,fFlipped=false;
+function startFlash(){fIdx=0;fFlipped=false;document.getElementById('quiz-menu').style.display='none';document.getElementById('flash-active').style.display='block';renderF();}
+function renderF(){fFlipped=false;var fc=document.getElementById('fcard');fc.className='flash-card';document.getElementById('fterm').textContent=FLASH[fIdx].t;document.getElementById('fdef').style.display='none';document.getElementById('fctr').textContent=(fIdx+1)+' / '+FLASH.length;}
+function flipF(){fFlipped=!fFlipped;var fc=document.getElementById('fcard');if(fFlipped){fc.className='flash-card flip';document.getElementById('fterm').textContent=FLASH[fIdx].t;document.getElementById('fdef').style.display='block';document.getElementById('fdef').textContent=FLASH[fIdx].d;}else{renderF();}}
+function nextF(){fIdx=(fIdx+1)%FLASH.length;renderF();}
+function prevF(){fIdx=(fIdx-1+FLASH.length)%FLASH.length;renderF();}
+
+// ── GLOSSARY ──
+var GLOS=[
+  {t:'GDB',c:'Blocking',d:'Gap-Down-Backer. The core OL rule. Check inside gap first. Block down if empty. Climb to backer if clear. Used on every gap play against any front.'},
+  {t:'Rump Line',c:'Blocking',d:'The imaginary line along the back of OL pads. All pullers stay tight to it — no wasted depth. Tight path = faster fit = cleaner run.'},
+  {t:'EMOL',c:'Blocking',d:'End Man on the Line of Scrimmage. The kickout target on Buck Sweep, Power, and A-series. PSG reads EMOL first.'},
+  {t:'Kickout',c:'Blocking',d:'Puller blocks EMOL outward, creating the inside running lane. PSG on Buck Sweep and A-series.'},
+  {t:'Wrap',c:'Blocking',d:'BSG puller inserts through the hole to block the first linebacker inside-out. Used in Power.'},
+  {t:'Log',c:'Blocking',d:'If EMOL squeezes or wrong-arms, seal him inside and let the ball bounce wide. The alternative to kickout in the Pull Check.'},
+  {t:'Post-Lead',c:'Blocking',d:'Tight vertical insert by a lineman to seal the play-side linebacker inside. Used in Power and Counter interior fits.'},
+  {t:'Scoop',c:'Blocking',d:'Combination block: step playside, work together on DL, one player climbs to backer. Used on Belly, Speed Sweep.'},
+  {t:'Fire-on-Away',c:'Blocking',d:'Center fires on the backside A-gap defender at snap to prevent pursuit. Used on Buck Sweep and A-series.'},
+  {t:'Cutoff',c:'Blocking',d:'BST cuts off backside DE pursuit — body in his path for 3-4 seconds. Used on Buck Sweep.'},
+  {t:'Pull Check',c:'Blocking',d:'BST reads the EMOL and decides: Kick or Log. Based on EMOL\'s first step. Half decisions lose — commit completely.'},
+  {t:'Stalk Block',c:'WR/TE',d:'WR technique: release, close on DB, break down (choppy feet at 2-3 yds), strike and sustain. Primary perimeter blocking skill.'},
+  {t:'Crack Block',c:'WR/TE',d:'WR blocks inside linebacker or safety at an inside angle. Must be above the waist, from front or side — never from behind.'},
+  {t:'Navy',c:'Formation',d:'TE on the LEFT side of the line. Under center. Navy = TE Left.'},
+  {t:'Army',c:'Formation',d:'TE on the RIGHT side of the line. Under center. Army = TE Right.'},
+  {t:'LA',c:'Formation',d:'Gun formation. TE on the LEFT. RED = RB right of QB. BLUE = RB left of QB.'},
+  {t:'Ram',c:'Formation',d:'Gun formation. TE on the RIGHT. RED = RB right of QB. BLUE = RB left of QB.'},
+  {t:'Louisville',c:'Formation',d:'Gun. TE LEFT. Y Dart built in. RG pulls (21 Trap). EVEN front target (E-N-T-E). W-M-S LBs.'},
+  {t:'Cardinal',c:'Formation',d:'Gun. TE RIGHT. Y Dart built in. LG pulls (21 Trap). EVEN front mirror. S-M-W LBs.'},
+  {t:'Lance',c:'Formation',d:'Gun. TE RIGHT. Y Dart built in. LG pulls (22 Trap). ODD front target (E-T-N-E). S-M-W LBs.'},
+  {t:'Spear',c:'Formation',d:'Gun. TE LEFT. Y Dart built in. RG pulls (21 Trap). ODD front mirror. W-M-S LBs.'},
+  {t:'LSU',c:'Formation',d:'Gun. Y Dart. LG pulls (22 Trap). Film-specific even variant.'},
+  {t:'Tiger',c:'Formation',d:'Gun. Y Dart. RG pulls (21 Trap). Film-specific odd variant.'},
+  {t:'X Over',c:'Formation',d:'X receiver aligns on same side as Y — creates unbalanced 6-man surface. Used on Speed Sweep Navy/Army.'},
+  {t:'Magic',c:'Shift',d:'[Origin] MAGIC [Destination] + play. Snap at 3 seconds after shift. Defense cannot re-communicate in time.'},
+  {t:'Black Magic',c:'Shift',d:'Shift + motion simultaneously. Maximum pre-snap stress. Use sparingly. Both formations must be individually mastered first.'},
+  {t:'Dart',c:'Motion',d:'4-back takes short pre-snap motion into pitch relationship. Begin on QB heel lift. Arrives BEFORE snap. Definitive coverage declare.'},
+  {t:'Orbit',c:'Motion',d:'4-back takes wide arc motion behind QB to far side. Full coverage declaration. Man = defender follows full arc.'},
+  {t:'Dartski',c:'Motion',d:'Y (TE) takes Dart motion. Used when 4-back is needed as a blocker on the play.'},
+  {t:'Orbitski',c:'Motion',d:'Y (TE) takes Orbit motion. TE as pitch option on Belly Ram Y Orbitski variants.'},
+  {t:'Rip',c:'Motion',d:'4-back Speed Sweep motion to the RIGHT. Must be at full sprint at the snap. Ball snapped on outside leg of BSG.'},
+  {t:'Liz',c:'Motion',d:'4-back Speed Sweep motion to the LEFT. Mirror image of Rip.'},
+  {t:'Waggle',c:'Pass',d:'QB boots away from the run fake. Can be live pass or full fake. Read: flat → middle → throw away. Never back across your body.'},
+  {t:'Reverse-Out',c:'QB',d:'QB\'s core footwork: open AWAY from the play (post foot 45°), then execute the handoff or fake. Every fake must be identical to every give.'},
+  {t:'L-Cut',c:'RB',d:"2-back's path on Buck Sweep: 2 steps through FB alignment THEN cut behind the wing. Not before step 2."},
+  {t:'Counter Step',c:'RB',d:"2-back's one-step misdirection away from the play on Power before redirecting to follow the wrap puller. ONE step — not two."},
+  {t:'A-Series Lateral Step',c:'RB',d:'3-back takes one lateral step toward play side, then runs for the TAIL of the TE. Completely different from all other footwork. Drill separately.'},
+  {t:'2-Back',c:'Personnel',d:'Halfback/Tailback. Primary ball carrier on Buck Sweep, Power, gun Trap variants. Pitch option on A-series.'},
+  {t:'3-Back',c:'Personnel',d:'Fullback. Inside carrier on Trap, Belly, A-series. Lead blocker / kickout block on Power.'},
+  {t:'4-Back',c:'Personnel',d:'Wingback/Hybrid. Speed Sweep carrier. Option pitch back. Motion player. Corner blocker in gun formations.'},
+  {t:'Zap',c:'RPO',d:'RPO route tag on Buck Sweep. Press coverage beater. Call vs. defenses pressing outside receivers and abandoning the flat.'},
+  {t:'Sail',c:'RPO',d:'RPO route tag on Buck Sweep. Deep seam concept. Call vs. single-high where safety rotates to Buck and abandons the seam.'},
+  {t:'Flood A',c:'Pass',d:'Three-level overload of one safety. Beats Cover 2 and Cover 3 by attacking high-medium-flat simultaneously.'},
+  {t:'Brett',c:'Pass',d:'Coverage-specific passing formation. Must confirm coverage before calling. Brett Cover 2 into Cover 3 is a pick.'},
+  {t:'Trap 2nd Man',c:'Advanced',d:'Full Trap action but ball goes to 4-back (or Y) sweeping outside. The 3-back\'s dive fake IS the play. OL runs zone, not the base trap pull.'},
+  {t:'Series Football',c:'Philosophy',d:'Every play family has a base, complement, and constraint. When the defense stops one — the other two open. Not variety — a trap.'},
+  {t:'Count the Box',c:'Philosophy',d:'Before every snap, someone counts defenders in the box. 8+ = RPO or Waggle answer required. Never run into a numbers deficit.'},
+];
+function renderGlos(f){
+  f=(f||'').toLowerCase();
+  var items=GLOS.filter(g=>!f||g.t.toLowerCase().includes(f)||g.d.toLowerCase().includes(f)||g.c.toLowerCase().includes(f));
+  document.getElementById('glos-list').innerHTML=items.map(g=>'<div class="gr"><div class="gt">'+g.t+'<br><span class="gtag">'+g.c+'</span></div><div class="gd2">'+g.d+'</div></div>').join('')||'<div style="padding:20px;color:var(--tx3);text-align:center;">No results found.</div>';
+}
+function filterG(v){renderGlos(v);}
+renderGlos('');
+
+// ── FRONTS ──
+function buildFronts(){
+  var fronts=[
+    {n:'Even Front (4-2)',type:'Even',tag:'E-N-T-E',sub:'W-M-S Linebackers',call:'Louisville Dart Y (RG pulls)',why:'Center uncovered — climbs to Mike. RG trap hits 3-tech from the side. '},
+    {n:'Even Front (4-2)',type:'Even',tag:'E-N-T-E',sub:'S-M-W Linebackers',call:'Tiger Dart Y / Spear',why:'RG pull targets same front but LB alignment favors this formation.'},
+    {n:'Odd Front (3-3)',type:'Odd',tag:'E-T-N-E',sub:'S-M-W Linebackers',call:'Cardinal Dart Y (LG pulls)',why:'LG pull from opposite side. Nose occupied by center.'},
+    {n:'Odd Front (3-3)',type:'Odd',tag:'E-T-N-E',sub:'W-M-S Linebackers',call:'Lance Y Dart (LG pulls)',why:'Mirror of Cardinal.'},
+    {n:'4-4 Loaded Box',type:'Loaded',tag:'8+ defenders',sub:'Box overloaded',call:'Trips + RPO tags, or Waggle',why:'Trips removes defender. Numbers say throw — not run.'},
+    {n:'Stack (3-3 Stack)',type:'Stack',tag:'Stack gaps',sub:'Gaps covered',call:'Close formations + tight splits',why:'Tighter OL splits force stack gaps to show before snap. Motion forces declaration.'},
+    {n:'Two-High (Cover 2/4)',type:'2High',tag:'Two safeties deep',sub:'Safeties back',call:'Louisville/Cardinal + Liz/Rip + Flood A',why:'Sweep stress + Flood overloads flat-to-safety zone.'},
+    {n:'Single-High (Cover 1/3)',type:'1High',tag:'One safety deep',sub:'Safety in middle',call:'LA/Ram + Mesh, Brett Cover 3',why:'Mesh beats man. Brett Cover 3 attacks the seam window.'},
+  ];
+  document.getElementById('fronts-c').innerHTML=fronts.map(f=>'<div class="front-card"><div class="fr-hd"><div><div class="fr-n">'+f.n+'</div><div style="font-size:11px;color:var(--tx3);margin-top:2px;">'+f.tag+' · '+f.sub+'</div></div><div class="fr-bg'+(f.type==='Odd'?' odd':'')+'">'+f.type+'</div></div><div style="font-size:12px;margin-bottom:6px;"><span style="color:var(--tx3);">Call: </span><strong style="color:var(--cr3);">'+f.call+'</strong></div><div style="font-size:12px;color:var(--tx2);line-height:1.5;">'+f.why+'</div></div>').join('');
+}
+
+// ── SITUATIONAL ──
+function buildSit(){
+  var sits=[
+    {s:'1st & 10 — Base',call:'31/32 Trap, 29/28 Buck, 25/26 Power — establish identity',av:'Waggle (save). Speed Sweep (set up first).'},
+    {s:'2nd & Short (1-3)',call:'Power, Trap — fast-hitting, guaranteed yards',av:'Belly, XX, Option — too slow developing'},
+    {s:'2nd & Medium (4-6)',call:'Buck Sweep, Belly Read, RPO Zap/Sail tags',av:'Pure inside runs into a loaded box'},
+    {s:'2nd & Long (7+)',call:'Waggle, Flood A, Mesh',av:'Trap into 8-man box — hands them 3rd & long'},
+    {s:'3rd & Short (1-2)',call:'Power, Trap — impose will. NO tricks.',av:'Option plays, XX, any trick concept'},
+    {s:'3rd & Medium (3-5)',call:'Buck Sweep, Belly Read, Waggle, Choice Waggle',av:'Plays you have not repped enough'},
+    {s:'3rd & Long (6+)',call:'Flood A, Mesh, Brett packages, Sprint Out / Waggle',av:'Running plays without an RPO answer'},
+    {s:'Red Zone (20-in)',call:'Trap, Power, Waggle short, Corner/Fade off PA',av:'Speed Sweep (no room), XX (too lateral)'},
+    {s:'Goal Line (5-in)',call:'Power, Trap, QB sneak — physical only',av:'Option series, XX — too many moving parts'},
+    {s:'2-Minute Drill',call:'Waggle, Flood, RPO Bubble, Trap (clock management)',av:'Inside runs that eat clock without OOB'},
+    {s:'Protect a Lead (4th Qtr)',call:'Trap, Power — eat clock, take free yards',av:"Spread formations — signals you want to score"},
+    {s:'8+ in the Box',call:'RPO Bubble, Waggle, Flood A — numbers say throw',av:'Running into the box without an answer'},
+    {s:'Empty Box (defense spread)',call:'Buck Sweep, Belly, Speed Sweep — attack the edge',av:'Pass plays — they are giving you the run'},
+  ];
+  document.getElementById('sit-c').innerHTML=sits.map(s=>'<div class="sit-row"><div class="sit-hd">'+s.s+'</div><div class="sit-call">✓ '+s.call+'</div><div class="sit-av">✗ '+s.av+'</div></div>').join('');
+}
+</script>
+</body>
+</html>
